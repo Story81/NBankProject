@@ -1,36 +1,38 @@
 package nBankTests;
 
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
+import models.UserRole;
+import models.accounts.CreateAccountRequest;
+import models.accounts.CreateAccountResponse;
+import models.accounts.DepositMoneyRequest;
+import models.accounts.DepositMoneyResponse;
+import models.admin.CreateUserRequest;
+import models.customer.GetCustomerProfileResponse;
+import models.loginUser.LoginUserRequest;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.AfterAll;
+import requests.requesters.AdminCreateUserRequestSender;
+import requests.requesters.CreateAccountRequestSender;
+import requests.requesters.DepositMoneyRequestSender;
+import requests.requesters.GetCustomerProfileRequestSender;
+import requests.requesters.LoginUserRequestSender;
+import specs.RequestSpecs;
+import specs.ResponceSpecs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static nBankTests.BaseTest.ADMIN_AUTH;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 
-
-public class CommonSteps {
-    public static String generateUsername() {
-        return "user_" + UUID.randomUUID().toString().substring(0, 8);
-    }
-
+public class CommonSteps extends BaseTest {
     public static void deleteUsersAccount(String userAuthHeader, int accountId) {
         given()
                 .header("Authorization", userAuthHeader)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .delete("/api/v1/accounts/{accountId}", accountId)
+                .delete("http://localhost:4111/api/v1/accounts/{accountId}", accountId)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.SC_OK);
@@ -41,7 +43,7 @@ public class CommonSteps {
                 .header("Authorization", userAuthHeader)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .delete("/api/v1/admin/users/{id}", userId)
+                .delete("http://localhost:4111/api/v1/admin/users/{id}", userId)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.SC_OK);
@@ -57,102 +59,58 @@ public class CommonSteps {
         }
     }
 
-    public static String createUser(String username, String password, String role) {
-        String userId = given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .header("Authorization", ADMIN_AUTH)
-                .body("""
-                        {
-                          "username": "%s",
-                          "password": "%s",
-                          "role": "%s"
-                        }
-                        """.formatted(username, password, role))
-                .when()
-                .post("/api/v1/admin/users")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.SC_CREATED)
+    public static String createUser(String name, String password) {
+        CreateUserRequest user = CreateUserRequest.builder()
+                .username(name)
+                .password(password)
+                .role(UserRole.USER.toString())
+                .build();
+
+        return new AdminCreateUserRequestSender(RequestSpecs.adminSpec(), ResponceSpecs.entityWasCreated())
+                .post(user)
                 .extract()
                 .path("id").toString();
-        return userId;
     }
 
-    public static int createUsersAccount(String userAuthHeader) {
-        int accountId = given()
-                .header("Authorization", userAuthHeader)
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .post("/api/v1/accounts")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.SC_CREATED)
-                .extract()
-                .path("id");
-        return accountId;
+    public static int createUsersAccount(String name, String password) {
+        CreateAccountResponse createAccountResponse =
+                new CreateAccountRequestSender(RequestSpecs.authAsUser(name, password),
+                        ResponceSpecs.entityWasCreated())
+                        .post(new CreateAccountRequest())
+                        .extract()
+                        .as(CreateAccountResponse.class);
+        return createAccountResponse.getId();
     }
 
-    public static String getAuthTokenTest(String username, String password) {
-        String authToken = given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .body("""
-                        {
-                        "username": "%s",
-                        "password": "%s"
-                        }
-                        """.formatted(username, password))
-                .post("/api/v1/auth/login")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.SC_OK)
+    public static String getAuthToken(String username, String password) {
+        return new LoginUserRequestSender(RequestSpecs.unauthSpec(),
+                ResponceSpecs.requestReturnsOK())
+                .post(LoginUserRequest.builder()
+                        .username(username)
+                        .password(password)
+                        .build())
                 .extract()
                 .header("Authorization");
-        return authToken;
     }
 
-    public static Response deposit(String authHeader, int accountId, float amount) {
-        Map<String, Object> depositBody = new HashMap<>();
-        depositBody.put("id", accountId);
-        depositBody.put("balance", amount);
+    public static DepositMoneyResponse deposit(String authHeader, int accountId, Float amount) {
+        DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
+                .id(accountId)
+                .balance(amount)
+                .build();
 
-        return given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .header("Authorization", authHeader)
-                .body(depositBody)
-                .post("/api/v1/accounts/deposit")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.SC_OK)
+        return new DepositMoneyRequestSender(
+                RequestSpecs.authAsUser(authHeader),
+                ResponceSpecs.requestReturnsOK())
+                .post(userDepositRequest)
                 .extract()
-                .response();
+                .as(DepositMoneyResponse.class);
     }
 
-    public static void depositMultipleTimes(String authHeader, int accountId, float amount, int times) {
+    public static void depositMultipleTimes(String authHeader, int accountId, Float amount, int times) {
         for (int i = 0; i < times; i++) {
             deposit(authHeader, accountId, amount);
         }
-    }
-
-    public static Response transfer(String authHeader, int senderAccountId, int receiverAccountId, float amount, int statusCode) {
-        Map<String, Object> depositBody = new HashMap<>();
-        depositBody.put("senderAccountId", senderAccountId);
-        depositBody.put("receiverAccountId", receiverAccountId);
-        depositBody.put("amount", amount);
-
-        return given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .header("Authorization", authHeader)
-                .body(depositBody)
-                .post("/api/v1/accounts/transfer")
-                .then()
-                .assertThat()
-                .statusCode(statusCode)
-                .extract()
-                .response();
     }
 
     public static float getBalance(String authHeader, int accountId) {
@@ -181,22 +139,36 @@ public class CommonSteps {
                 try {
                     deleteUsersAccount(authHeader, accountId);
                 } catch (Exception e) {
+                    System.out.println("All counts:  " + countsIds);
                     System.err.println("Failed to delete account " + accountId + ": " + e.getMessage());
                 }
             }
         }
     }
 
-    public static Response getUsers(String authHeader, int statusCode) {
-        return given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .header("Authorization", authHeader)
-                .get("/api/v1/customer/profile")
-                .then()
-                .assertThat()
-                .statusCode(statusCode)
+    public static GetCustomerProfileResponse getCustomerProfile(String username, String password) {
+        return new GetCustomerProfileRequestSender(
+                RequestSpecs.authAsUser(username, password),
+                ResponceSpecs.requestReturnsOK())
+                .get()
                 .extract()
-                .response();
+                .as(GetCustomerProfileResponse.class);
+    }
+
+    public static void assertCustomerProfile(
+            String newName,
+            String username,
+            String password,
+            String expectedUserId,
+            String expectedRole
+    ) {
+        GetCustomerProfileResponse response = getCustomerProfile(username, password);
+
+        softly.assertThat(response.getId()).isEqualTo(Integer.parseInt(expectedUserId));
+        softly.assertThat(response.getPassword()).isNotEqualTo(password);
+        softly.assertThat(response.getName()).isEqualTo(newName);
+        softly.assertThat(response.getUsername()).isEqualTo(username);
+        softly.assertThat(response.getRole()).isEqualTo(expectedRole);
+        softly.assertThat(response.getAccounts()).isEmpty();
     }
 }
