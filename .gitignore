@@ -12,6 +12,9 @@ target/
 *.iml
 *.ipr
 
+### HTTP Client auto-saved files ###
+.idea/httpRequests/
+
 ### Eclipse ###
 .apt_generated
 .classpath
