@@ -1,0 +1,27 @@
+package requests;
+
+import io.restassured.response.ValidatableResponse;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
+import models.LoginUserRequest;
+
+import static io.restassured.RestAssured.given;
+
+
+public class AdminLoginUserRequest extends Request<LoginUserRequest>{
+    public AdminLoginUserRequest(RequestSpecification requestSpec, ResponseSpecification responseSpec) {
+        super(requestSpec, responseSpec);
+    }
+
+
+    @Override
+    public ValidatableResponse post(LoginUserRequest model) {
+        return given()
+                .spec(requestSpec)
+                .body(model)
+                .post("/api/v1/auth/login")
+                .then()
+                .assertThat()
+                .spec(responseSpec);
+    }
+}
