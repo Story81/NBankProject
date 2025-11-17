@@ -129,6 +129,11 @@ POST http://localhost:4111/api/v1/accounts
 Content-Type: application/json
 Authorization: Basic a2F0ZTE5OTgxOmthdGUxOTk4MQ==
 
+### Negative test: User can not create new count with invalid token (=>401)
+POST http://localhost:4111/api/v1/accounts
+Content-Type: application/json
+Authorization: Basic TWFyazE5OTk6TWFyazg1NDg3IQ1==
+
 ### Positive test: check account was created
 GET http://localhost:4111/api/v1/customer/accounts
 Content-Type: application/json
