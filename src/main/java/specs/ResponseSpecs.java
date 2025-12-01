@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class ResponseSpecs {
     public static final String AUTHORIZATION_HEADER = "Authorization";
-
     private ResponseSpecs() {
     }
 
