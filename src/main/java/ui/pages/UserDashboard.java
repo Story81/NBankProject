@@ -10,12 +10,14 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 @Getter
 public class UserDashboard  extends BasePage<UserDashboard >{
+    public static final String DEFAULT_NAME = "noname";
     private DepositPage depositPage = new DepositPage();
     private TransferPage transferPage = new TransferPage();
     private SelenideElement welcomeHeader = $(Selectors.byClassName("welcome-text"));
     private SelenideElement createNewAccount = $(byText("➕ Create New Account"));
     private SelenideElement depositMoneyButton = $(byText("\uD83D\uDCB0 Deposit Money"));
     private SelenideElement transferMoneyButton = $(byText("\uD83D\uDD04 Make a Transfer"));
+
 
 
     @Override

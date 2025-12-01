@@ -18,6 +18,7 @@ import java.util.List;
 import static ui.pages.BankAlert.ERROR_ENTER_VALID_NAME;
 import static ui.pages.BankAlert.ERROR_NAME_MUST_CONTAIN_TWO_WORDS;
 import static ui.pages.BankAlert.NAME_UPDATE_USER_CREATED_SUCCESSFULLY;
+import static ui.pages.UserDashboard.DEFAULT_NAME;
 
 public class ChangeUsersNameTest extends BaseUiTest {
     UserDashboard dashboard = new UserDashboard();
@@ -29,15 +30,14 @@ public class ChangeUsersNameTest extends BaseUiTest {
     @Test
     public void UserCanChangeNameTest() {
         user = AdminSteps.createUser();
-        String noName = "Noname";
         String newName = RandomData.getRandomFullName();
 
         authAsUser(user);
 
-        dashboard.open().checkWelcomeText(noName); //проверка приветственного заголовка
+        dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
         ProfilePage profilePage = headerPanel
-                .checkUsersInfo(noName, user.username())   // проверка в хедере инфо об именах юзера
+                .checkUsersInfo(DEFAULT_NAME, user.username())   // проверка в хедере инфо об именах юзера
                 .clickUserProfileMenu()
                 .profilePageShouldBeOpen()                 //проверка что страница профиля открылась
                 .setNewUserName(newName)                    //ввод нового имени
@@ -59,14 +59,13 @@ public class ChangeUsersNameTest extends BaseUiTest {
     public void UserCanNotChangeNameWithEmptyNewNameTest() {
         user = AdminSteps.createUser();
         createdUserIds.add(user);
-        String noName = "Noname";
 
         authAsUser(user);
 
-        dashboard.open().checkWelcomeText(noName); //проверка приветственного заголовка
+        dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
         ProfilePage profilePage = headerPanel
-                .checkUsersInfo(noName, user.username())   // проверка в хедере инфо об именах юзера
+                .checkUsersInfo(DEFAULT_NAME, user.username())   // проверка в хедере инфо об именах юзера
                 .clickUserProfileMenu()
                 .profilePageShouldBeOpen()                 //проверка что страница профиля открылась
                 .clickSaveButton()
@@ -74,9 +73,9 @@ public class ChangeUsersNameTest extends BaseUiTest {
                 .profilePageShouldBeOpen()
                 .refreshPage();
 
-        headerPanel.checkUsersInfo(noName, user.username());
+        headerPanel.checkUsersInfo(DEFAULT_NAME, user.username());
         profilePage.clickHomeButton()
-                .checkWelcomeText(noName);                 //проверка приветственного заголовка
+                .checkWelcomeText(DEFAULT_NAME);                 //проверка приветственного заголовка
 
         //проверка имени на бэке через getCustomerProfile
 
@@ -87,15 +86,14 @@ public class ChangeUsersNameTest extends BaseUiTest {
     public void UserCanNotChangeNameWithInvalidNewNameTest() {
         user = AdminSteps.createUser();
         createdUserIds.add(user);
-        String noName = "Noname";
         String newName = RandomData.getUserName();
 
         authAsUser(user);
 
-        dashboard.open().checkWelcomeText(noName); //проверка приветственного заголовка
+        dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
         ProfilePage profilePage = headerPanel
-                .checkUsersInfo(noName, user.username())   // проверка в хедере инфо об именах юзера
+                .checkUsersInfo(DEFAULT_NAME, user.username())   // проверка в хедере инфо об именах юзера
                 .clickUserProfileMenu()
                 .profilePageShouldBeOpen()                 //проверка что страница профиля открылась
                 .setNewUserName(newName)
@@ -104,9 +102,9 @@ public class ChangeUsersNameTest extends BaseUiTest {
                 .profilePageShouldBeOpen()
                 .refreshPage();
 
-        headerPanel.checkUsersInfo(noName, user.username());
+        headerPanel.checkUsersInfo(DEFAULT_NAME, user.username());
         profilePage.clickHomeButton()
-                .checkWelcomeText(noName);                 //проверка приветственного заголовка
+                .checkWelcomeText(DEFAULT_NAME);                 //проверка приветственного заголовка
 
         //проверка имени на бэке через getCustomerProfile
         ModelAssertions.assertThatModels(user, UserSteps.getCustomerProfile(user)).match();

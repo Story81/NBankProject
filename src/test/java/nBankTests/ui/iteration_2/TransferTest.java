@@ -30,7 +30,7 @@ public class TransferTest extends BaseUiTest {
     private static UserData user;
     private static AccountData account_1;
     private static AccountData account_2;
-    private Double depositAmount = 5000.00;
+    private final Double depositAmount = 5000.00;
     private static List<UserData> createdUsers = new ArrayList<>();
     private static Map<UserData, List<Integer>> accountsIds = new HashMap<>();
 

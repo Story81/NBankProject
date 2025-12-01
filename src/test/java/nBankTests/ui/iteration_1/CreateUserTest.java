@@ -12,10 +12,12 @@ import ui.pages.AdminPanel;
 import ui.pages.BankAlert;
 
 import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.exist;
 import static org.assertj.core.api.Assertions.assertThat;
 import static ui.pages.BankAlert.USERNAME_MUST_BE_BETWEEN_3_AND_15_CHARACTERS;
 
 public class CreateUserTest extends BaseUiTest {
+    private String invalidName = "a";
 
     @Test
     public void adminCanCreateUserTest() {
@@ -45,12 +47,12 @@ public class CreateUserTest extends BaseUiTest {
 
         // ШАГ 2: админ создает юзера в банке
         CreateUserRequest newUser = RandomModelGenerator.generate(CreateUserRequest.class);
-        newUser.setUsername("a");
+        newUser.setUsername(invalidName);
 
         new AdminPanel().open()
                 .createUser(newUser.getUsername(), newUser.getPassword())
                 .checkAlertMessageAndAccept(USERNAME_MUST_BE_BETWEEN_3_AND_15_CHARACTERS.getMessage())
-                .getAllUsers().findBy(exactText(newUser.getUsername() + "\nUSER")).shouldNotBe(Condition.exist);
+                .getAllUsers().findBy(exactText(newUser.getUsername() + "\nUSER")).shouldNotBe(exist);
 
         //Проверка, что юзер не найден
         long usersWithSameUsernameAsNewUser = AdminSteps.getAllUsers().stream().filter(user -> user.getUsername().equals(newUser.getUsername())).count();
