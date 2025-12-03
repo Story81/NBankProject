@@ -2,8 +2,7 @@ package nBankTests.ui;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import models.admin.CreateUserRequest;
-import nBankTests.BaseTest;
+import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.BeforeAll;
 import specs.RequestSpecs;
 import utils.UserData;

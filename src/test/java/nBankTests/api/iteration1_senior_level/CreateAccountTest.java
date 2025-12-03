@@ -1,7 +1,7 @@
-package nBankTests.iteration1_senior_level;
+package nBankTests.api.iteration1_senior_level;
 
 import models.customer.GetAccountsResponse;
-import nBankTests.BaseTest;
+import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import requests.steps.AdminSteps;

@@ -1,7 +1,7 @@
-package nBankTests.iteration2_senior_level;
+package nBankTests.api.iteration2_senior_level;
 
 import models.accounts.TransferMoneyRequest;
-import nBankTests.BaseTest;
+import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

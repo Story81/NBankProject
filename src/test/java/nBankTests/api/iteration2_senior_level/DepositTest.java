@@ -1,4 +1,4 @@
-package nBankTests.iteration2_senior_level;
+package nBankTests.api.iteration2_senior_level;
 
 import generatos.RandomData;
 import models.accounts.OperationType;
@@ -6,7 +6,7 @@ import models.accounts.Transaction;
 import models.accounts.DepositMoneyRequest;
 import models.accounts.DepositMoneyResponse;
 import models.comparison.ModelAssertions;
-import nBankTests.BaseTest;
+import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

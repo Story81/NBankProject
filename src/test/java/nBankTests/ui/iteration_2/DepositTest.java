@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static generatos.RandomData.getDepositAmount;
-import static nBankTests.iteration2_senior_level.TransferPositiveTest.addAccountToAccountsIdsMap;
+import static nBankTests.api.iteration2_senior_level.TransferPositiveTest.addAccountToAccountsIdsMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.within;
 import static ui.pages.BankAlert.DEPOSIT_SUCCESS;

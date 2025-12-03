@@ -1,10 +1,10 @@
-package nBankTests.iteration2_senior_level;
+package nBankTests.api.iteration2_senior_level;
 
 import generatos.RandomData;
 import models.accounts.TransferMoneyRequest;
 import models.accounts.TransferMoneyResponse;
 import models.comparison.ModelAssertions;
-import nBankTests.BaseTest;
+import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
