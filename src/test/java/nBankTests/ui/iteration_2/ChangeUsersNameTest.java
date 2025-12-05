@@ -2,20 +2,15 @@ package nBankTests.ui.iteration_2;
 
 import api.generatos.RandomData;
 import api.models.comparison.ModelAssertions;
+import api.requests.steps.UserSteps;
 import api.storage.SessionStorage;
+import api.utils.UserData;
 import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import api.requests.steps.AdminSteps;
-import api.requests.steps.UserSteps;
 import ui.pages.HeaderPanel;
 import ui.pages.ProfilePage;
 import ui.pages.UserDashboard;
-import api.utils.UserData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static ui.pages.BankAlert.ERROR_ENTER_VALID_NAME;
 import static ui.pages.BankAlert.ERROR_NAME_MUST_CONTAIN_TWO_WORDS;
@@ -26,8 +21,6 @@ public class ChangeUsersNameTest extends BaseUiTest {
     UserDashboard dashboard = new UserDashboard();
     HeaderPanel headerPanel = new HeaderPanel();
     private static UserData user;
-    private static List<UserData> createdUserIds = new ArrayList<>();
-
 
     @Test
     @UserSession
@@ -60,7 +53,6 @@ public class ChangeUsersNameTest extends BaseUiTest {
     @UserSession
     public void UserCanNotChangeNameWithEmptyNewNameTest() {
         user = SessionStorage.getUser();
-        createdUserIds.add(user);
 
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -78,7 +70,6 @@ public class ChangeUsersNameTest extends BaseUiTest {
                 .checkWelcomeText(DEFAULT_NAME);                 //проверка приветственного заголовка
 
         //проверка имени на бэке через getCustomerProfile
-
         ModelAssertions.assertThatModels(user, UserSteps.getCustomerProfile(user)).match();
     }
 
@@ -86,7 +77,7 @@ public class ChangeUsersNameTest extends BaseUiTest {
     @UserSession
     public void UserCanNotChangeNameWithInvalidNewNameTest() {
         user = SessionStorage.getUser();
-        createdUserIds.add(user);
+
         String newName = RandomData.getUserName();
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -106,9 +97,5 @@ public class ChangeUsersNameTest extends BaseUiTest {
 
         //проверка имени на бэке через getCustomerProfile
         ModelAssertions.assertThatModels(user, UserSteps.getCustomerProfile(user)).match();
-    }
-    @AfterAll
-    public static void deleteTestData() {
-        AdminSteps.deleteAllUsers(createdUserIds);
     }
 }

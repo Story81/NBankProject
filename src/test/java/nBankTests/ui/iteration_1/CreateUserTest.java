@@ -1,22 +1,17 @@
 package nBankTests.ui.iteration_1;
 
-import com.codeborne.selenide.Condition;
 import api.generatos.RandomModelGenerator;
 import api.models.admin.CreateUserRequest;
 import api.models.admin.CreateUserResponse;
 import api.models.comparison.ModelAssertions;
+import api.requests.steps.AdminSteps;
 import common.annotations.AdminSession;
 import common.extensions.AdminSessionExtension;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.Test;
-import api.requests.steps.AdminSteps;
 import org.junit.jupiter.api.extension.ExtendWith;
-import ui.elements.UserBage;
 import ui.pages.AdminPanel;
-import ui.pages.BankAlert;
 
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Condition.exist;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ui.pages.BankAlert.USERNAME_MUST_BE_BETWEEN_3_AND_15_CHARACTERS;
@@ -52,7 +47,6 @@ public class CreateUserTest extends BaseUiTest {
                 .createUser(newUser.getUsername(), newUser.getPassword())
                 .checkAlertMessageAndAccept(USERNAME_MUST_BE_BETWEEN_3_AND_15_CHARACTERS.getMessage())
                 .getAllUsers().stream().noneMatch(userBage -> userBage.getUsername().equals(newUser.getUsername())));
-
 
         long usersWithSameUsernameAsNewUser = AdminSteps.getAllUsers().stream().filter(user -> user.getUsername().equals(newUser.getUsername())).count();
         assertThat(usersWithSameUsernameAsNewUser).isZero();

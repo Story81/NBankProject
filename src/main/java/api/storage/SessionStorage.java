@@ -6,6 +6,7 @@ import api.utils.AccountData;
 import api.utils.UserData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -88,5 +89,41 @@ public class SessionStorage {
     public static void clear() {
         INSTANCE.userStepsMap.clear();
         clearAccounts();
+    }
+
+    public static void printState() {
+        System.out.println("=== SessionStorage State Dump ===");
+
+        if (INSTANCE.userStepsMap.isEmpty()) {
+            System.out.println("No users stored.");
+            return;
+        }
+
+        int userIndex = 1;
+        for (Map.Entry<UserData, UserSteps> entry : INSTANCE.userStepsMap.entrySet()) {
+            UserData user = entry.getKey();
+            List<AccountData> accounts = INSTANCE.userAccountsMap.getOrDefault(user, Collections.emptyList());
+            List<Integer> accountIds = INSTANCE.userAccountIdsMap.getOrDefault(user, Collections.emptyList());
+
+            System.out.printf("User #%d:%n", userIndex);
+            System.out.printf("  - UserData: %s%n", user);
+            System.out.printf("  - Accounts (%d):%n", accounts.size());
+
+            if (accounts.isEmpty()) {
+                System.out.println("      (no accounts)");
+            } else {
+                for (int i = 0; i < accounts.size(); i++) {
+                    AccountData account = accounts.get(i);
+                    Integer accountId = i < accountIds.size() ? accountIds.get(i) : null;
+                    System.out.printf("      #%d: ID=%s, Account=%s%n",
+                            i + 1,
+                            accountId != null ? accountId : "unknown",
+                            account);
+                }
+            }
+            userIndex++;
+            System.out.println();
+        }
+        System.out.println("=== End of SessionStorage State ===");
     }
 }

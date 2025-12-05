@@ -5,12 +5,6 @@ import api.generatos.RandomModelGenerator;
 import api.models.admin.CreateUserRequest;
 import api.models.admin.CreateUserResponse;
 import api.models.comparison.ModelAssertions;
-import nBankTests.api.BaseTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import api.requests.skeleton.Endpoint;
 import api.requests.skeleton.requesters.CrudRequester;
 import api.requests.skeleton.requesters.ValidatedCrudRequester;
@@ -18,6 +12,12 @@ import api.requests.steps.AdminSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import api.utils.UserData;
+import nBankTests.api.BaseTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 

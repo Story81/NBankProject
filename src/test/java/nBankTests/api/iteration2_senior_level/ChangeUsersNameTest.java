@@ -4,34 +4,31 @@ import api.generatos.RandomData;
 import api.models.comparison.ModelAssertions;
 import api.models.customer.UpdateCustomerProfileRequest;
 import api.models.customer.UpdateCustomerProfileResponse;
+import api.requests.skeleton.Endpoint;
+import api.requests.skeleton.requesters.CrudRequester;
+import api.requests.steps.UserSteps;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
+import api.storage.SessionStorage;
+import api.utils.UserData;
+import common.annotations.UserSession;
 import nBankTests.api.BaseTest;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import api.requests.skeleton.Endpoint;
-import api.requests.skeleton.requesters.CrudRequester;
-import api.requests.steps.AdminSteps;
-import api.requests.steps.UserSteps;
-import api.specs.RequestSpecs;
-import api.specs.ResponseSpecs;
-import api.utils.UserData;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static api.utils.UserData.UNUSED;
 
 
 public class ChangeUsersNameTest extends BaseTest {
-    private static List<UserData> createdUserIds = new ArrayList<>();
 
     @Test
+    @UserSession
     public void userCanUpdateName() {
-        UserData user = AdminSteps.createUser();
-        createdUserIds.add(user);
+        UserData user = SessionStorage.getUser();
         String newName = RandomData.getRandomFullName();
 
         UpdateCustomerProfileResponse updateResponse = UserSteps.updateCustomerProfile(user, newName);
@@ -52,10 +49,10 @@ public class ChangeUsersNameTest extends BaseTest {
     }
 
     @ParameterizedTest
+    @UserSession
     @MethodSource("changeNameInvalidData")
     public void userCanNotUpdateName(String newName, String errorMassage) {
-        UserData user = AdminSteps.createUser();
-        createdUserIds.add(user);
+        UserData user = SessionStorage.getUser();
 
         UpdateCustomerProfileRequest updateRequest = UpdateCustomerProfileRequest.builder()
                 .name(newName)
@@ -70,9 +67,9 @@ public class ChangeUsersNameTest extends BaseTest {
     }
 
     @Test
+    @UserSession
     public void userCannotUpdateNameWithInvalidToken() {
-        UserData user = AdminSteps.createUser();
-        createdUserIds.add(user);
+        UserData user = SessionStorage.getUser();
         String newName = RandomData.getRandomFullName();
 
         UpdateCustomerProfileRequest updateRequest = UpdateCustomerProfileRequest.builder()
@@ -85,10 +82,5 @@ public class ChangeUsersNameTest extends BaseTest {
                 .put(updateRequest);
 
         ModelAssertions.assertThatModels(user, UserSteps.getCustomerProfile(user)).match();
-    }
-
-    @AfterAll
-    public static void deleteTestData() {
-        AdminSteps.deleteAllUsers(createdUserIds);
     }
 }

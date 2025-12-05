@@ -6,16 +6,16 @@ import api.models.accounts.Transaction;
 import api.models.accounts.DepositMoneyRequest;
 import api.models.accounts.DepositMoneyResponse;
 import api.models.comparison.ModelAssertions;
+import api.storage.SessionStorage;
+import common.annotations.Account;
+import common.annotations.UserSession;
 import nBankTests.api.BaseTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import api.requests.skeleton.Endpoint;
 import api.requests.skeleton.requesters.CrudRequester;
-import api.requests.steps.AdminSteps;
 import api.requests.steps.UserSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
@@ -25,26 +25,20 @@ import api.utils.UserData;
 import java.util.stream.Stream;
 
 import static api.generatos.RandomData.getDepositAmount;
+import static api.models.BankAlert.UNAUTHORIZED_ERROR_VALUE;
 import static org.assertj.core.api.Assertions.within;
 
 public class DepositTest extends BaseTest {
     private static AccountData account_1;
-    private static AccountData account_2;
     private static UserData user_1;
-    private static UserData user_2;
-    private static final String ERROR_VALUE = "Unauthorized access to account";
-
-    @BeforeAll
-    public static void createTestData() {
-        user_1 = AdminSteps.createUser();
-        account_1 = UserSteps.createAccount(user_1);
-
-        user_2 = AdminSteps.createUser();
-        account_2 = UserSteps.createAccount(user_2);
-    }
 
     @Test
+    @UserSession
+    @Account
     public void userCanDepositAndBalanceChangesCorrectlyTest() {
+        user_1 = SessionStorage.getUser();
+        account_1 = SessionStorage.getFirstAccount(user_1);
+
         // 1. Первый депозит — случайная сумма
         Double firstTransactionAmount = getDepositAmount();
         Double currentBalance = firstTransactionAmount;
@@ -73,51 +67,63 @@ public class DepositTest extends BaseTest {
 
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
-                Arguments.of(-1.0, "Deposit amount must be at least 0.01", account_1.id(), user_1),
-                Arguments.of(0.0, "Deposit amount must be at least 0.01", account_1.id(), user_1),
-                Arguments.of(5001.0, "Deposit amount cannot exceed 5000", account_1.id(), user_1)
+                Arguments.of(-1.0, "Deposit amount must be at least 0.01"),
+                Arguments.of(0.0, "Deposit amount must be at least 0.01"),
+                Arguments.of(5001.0, "Deposit amount cannot exceed 5000")
         );
     }
 
     @MethodSource("depositInvalidData")
     @ParameterizedTest
-    public void userCanNotDepositWithInvalidAmount(Double amount, String errorValue, int accountId, UserData user) {
-        double currentBalance = UserSteps.getBalance(user, account_1);
+    @UserSession
+    @Account
+    public void userCanNotDepositWithInvalidAmount(Double amount, String errorValue) {
+        user_1 = SessionStorage.getUser();
+        account_1 = SessionStorage.getFirstAccount(user_1);
+        double currentBalance = UserSteps.getBalance(user_1, account_1);
 
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
-                .id(accountId)
-                .balance(amount)
-                .build();
-
-        new CrudRequester(RequestSpecs.authAsUser(user.username(), user.password()),
-                Endpoint.ACCOUNT_DEPOSIT,
-                ResponseSpecs.requestReturns400WithoutKeyValue(errorValue))
-                .post(userDepositRequest);
-
-        softly.assertThat(UserSteps.getBalance(user, account_1)).isEqualTo(currentBalance, within(0.005));
-    }
-
-    @Test
-    public void userCanNotDepositToNotOwnedAccount() {
-        Double amount = RandomData.getDepositAmount();
-        Double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
-
-        DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
-                .id(account_2.id())
+                .id(account_1.id())
                 .balance(amount)
                 .build();
 
         new CrudRequester(RequestSpecs.authAsUser(user_1.username(), user_1.password()),
                 Endpoint.ACCOUNT_DEPOSIT,
-                ResponseSpecs.requestReturnsForbidden(ERROR_VALUE))
+                ResponseSpecs.requestReturns400WithoutKeyValue(errorValue))
+                .post(userDepositRequest);
+
+        softly.assertThat(UserSteps.getBalance(user_1, account_1)).isEqualTo(currentBalance, within(0.005));
+    }
+
+    @Test
+    @UserSession
+    @Account(value = 2)
+    public void userCanNotDepositToNotOwnedAccount() {
+        user_1 = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user_1,1);
+        Integer accountRandomId = RandomData.generateRandomAccountId();
+        Double amount = RandomData.getDepositAmount();
+        Double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
+
+        DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
+                .id(accountRandomId)
+                .balance(amount)
+                .build();
+
+        new CrudRequester(RequestSpecs.authAsUser(user_1.username(), user_1.password()),
+                Endpoint.ACCOUNT_DEPOSIT,
+                ResponseSpecs.requestReturnsForbidden(UNAUTHORIZED_ERROR_VALUE.getMessage()))
                 .post(userDepositRequest);
 
         softly.assertThat(UserSteps.getBalance(user_1, account_1)).isEqualTo(balanceBeforeDeposit, within(0.005));
     }
 
-
     @Test
+    @UserSession
+    @Account
     public void userCanNotDepositWithExpiredAuthToken() {
+        user_1 = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user_1,1);
         double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
         double amount = RandomData.getDepositAmount();
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
@@ -134,7 +140,11 @@ public class DepositTest extends BaseTest {
     }
 
     @Test
+    @UserSession
+    @Account
     public void userCannotDepositWithoutToken() {
+        user_1 = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user_1,1);
         double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
         double amount = RandomData.getDepositAmount();
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
@@ -153,14 +163,18 @@ public class DepositTest extends BaseTest {
     public static Stream<Arguments> invalidDepositRequests() {
         return Stream.of(
                 Arguments.of(null, RandomData.getDepositAmount()),
-                Arguments.of(account_1.id(), null),
+                Arguments.of(RandomData.generateRandomAccountId(), null),
                 Arguments.of(null, null)
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidDepositRequests")
+    @UserSession
+    @Account
     public void userCannotDepositWithInvalidFields(Integer id, Double balance) {
+        user_1 = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user_1,1);
         double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
 
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
@@ -174,14 +188,6 @@ public class DepositTest extends BaseTest {
                 .post(userDepositRequest);
 
         softly.assertThat(UserSteps.getBalance(user_1, account_1)).isEqualTo(balanceBeforeDeposit, within(0.005));
-    }
-
-    @AfterAll
-    public static void deleteTestData() {
-        UserSteps.deleteAccount(user_1, account_1.id());
-        UserSteps.deleteAccount(user_2, account_2.id());
-        AdminSteps.deleteUser(user_1);
-        AdminSteps.deleteUser(user_2);
     }
 
     private void checkTransaction(Transaction transaction, AccountData account, Double expectedAmount) {

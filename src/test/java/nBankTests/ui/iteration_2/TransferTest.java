@@ -1,6 +1,9 @@
 package nBankTests.ui.iteration_2;
 
 import api.generatos.RandomData;
+import api.storage.SessionStorage;
+import common.annotations.Account;
+import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +21,6 @@ import java.util.Map;
 
 import static api.generatos.RandomData.generateRandomAccountId;
 import static api.generatos.RandomData.getDepositAmount;
-import static nBankTests.api.iteration2_senior_level.TransferPositiveTest.addAccountToAccountsIdsMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.within;
 import static ui.pages.BankAlert.ERROR_INVALID_TRANSFER;
@@ -31,18 +33,15 @@ public class TransferTest extends BaseUiTest {
     private static AccountData account_1;
     private static AccountData account_2;
     private final Double depositAmount = 5000.00;
-    private static List<UserData> createdUsers = new ArrayList<>();
-    private static Map<UserData, List<Integer>> accountsIds = new HashMap<>();
 
     @Test
+    @UserSession
+    @Account(value=2)
     public void userCanDepositAndBalanceChangesCorrectlyTest() {
-        //создаем тестовые данные
-        user = AdminSteps.createUser();
-        createdUsers.add(user);
-        account_1 = UserSteps.createAndDepositAccount(user, depositAmount, 1);
-        addAccountToAccountsIdsMap(user, account_1);
-        account_2 = UserSteps.createAccount(user);
-        addAccountToAccountsIdsMap(user, account_2);
+        user = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user,1);
+        UserSteps.deposit(user, account_1, depositAmount);
+        account_2 = SessionStorage.getAccount(user,2);
 
         Double transferAmount = getDepositAmount();
         Double accountBalanceBeforeTransfer_1 = UserSteps.getBalance(user, account_1);
@@ -50,8 +49,6 @@ public class TransferTest extends BaseUiTest {
         String userName = RandomData.getUserName();
 
         //шаги
-//        authAsUser(user);
-
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();           // юзер кликает на Make a Transfer
 
@@ -81,22 +78,19 @@ public class TransferTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
+    @Account(value=2)
     public void userCanDepositWithEmptyRecipientNameTest() {
-        //создаем тестовые данные
-        user = AdminSteps.createUser();
-        createdUsers.add(user);
-        account_1 = UserSteps.createAndDepositAccount(user, depositAmount, 1);
-        addAccountToAccountsIdsMap(user, account_1);
-        account_2 = UserSteps.createAccount(user);
-        addAccountToAccountsIdsMap(user, account_2);
+        user = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user,1);
+        UserSteps.deposit(user, account_1, depositAmount);
+        account_2 = SessionStorage.getAccount(user,2);
 
         Double transferAmount = getDepositAmount();
         Double accountBalanceBeforeTransfer_1 = UserSteps.getBalance(user, account_1);
         Double accountBalanceBeforeTransfer_2 = UserSteps.getBalance(user, account_2);
 
         //шаги
-//        authAsUser(user);
-
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();           // юзер кликает на Make a Transfer
 
@@ -125,12 +119,12 @@ public class TransferTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
+    @Account
     public void userCanNotTransferOnNonExistentAccount() {
-        //создаем тестовые данные
-        user = AdminSteps.createUser();
-        createdUsers.add(user);
-        account_1 = UserSteps.createAndDepositAccount(user, depositAmount, 1);
-        addAccountToAccountsIdsMap(user, account_1);
+        user = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user,1);
+        UserSteps.deposit(user, account_1, depositAmount);
         int receiverAccountId = generateRandomAccountId();
 
         Double transferAmount = getDepositAmount();
@@ -138,8 +132,6 @@ public class TransferTest extends BaseUiTest {
         String userName = RandomData.getUserName();
 
         //шаги
-//        authAsUser(user);
-
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();            // юзер кликает на Make a Transfer
 
@@ -162,15 +154,12 @@ public class TransferTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
+    @Account(value=2)
     public void userCanNotTransferWhenTransferAmountExceedsAccountBalance() {
-        //создаем тестовые данные
-        user = AdminSteps.createUser();
-        createdUsers.add(user);
-        account_1 = UserSteps.createAccount(user);
-        addAccountToAccountsIdsMap(user, account_1);
-        account_2 = UserSteps.createAccount(user);
-        addAccountToAccountsIdsMap(user, account_2);
-        int receiverAccountId = generateRandomAccountId();
+        user = SessionStorage.getUser();
+        account_1 = SessionStorage.getAccount(user,1);
+        account_2 = SessionStorage.getAccount(user,2);
 
         Double transferAmount = getDepositAmount();
         Double accountBalanceBeforeTransfer_1 = UserSteps.getBalance(user, account_1);
@@ -178,8 +167,6 @@ public class TransferTest extends BaseUiTest {
         String userName = RandomData.getUserName();
 
         //шаги
-//        authAsUser(user);
-
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();           // юзер кликает на Make a Transfer
 
@@ -187,7 +174,7 @@ public class TransferTest extends BaseUiTest {
                 .checkSelectAccountField()                 //Проверяем отображение поля
                 .selectSenderAccount(account_1.accountNumber())      //Выбираем счет
                 .inputRecipientName(userName)              // Вводим имя получателя
-                .selectRecipientAccount(String.valueOf(receiverAccountId))   // Выбираем номер счета получателя
+                .selectRecipientAccount(String.valueOf(account_2.accountNumber()))   // Выбираем номер счета получателя
                 .inputTransferAmount(transferAmount)
                 .clickConfirmDetailsCheckbox()             //Клик чекбокс проверки корректности деталей операции
                 .clickTransferButton()
@@ -204,10 +191,5 @@ public class TransferTest extends BaseUiTest {
         transferPage.checkReceivedAccountBalance(account_1.accountNumber(), accountBalanceBeforeTransfer_2);
         Double accountBalanceAfterTransfer_2 = UserSteps.getBalance(user, account_2);
         assertThat(accountBalanceAfterTransfer_2).isEqualTo(accountBalanceBeforeTransfer_2, within(0.001));
-    }
-    @AfterAll
-    public static void deleteTestData() {
-        UserSteps.deleteAllAccounts(accountsIds);
-        AdminSteps.deleteAllUsers(createdUsers);
     }
 }

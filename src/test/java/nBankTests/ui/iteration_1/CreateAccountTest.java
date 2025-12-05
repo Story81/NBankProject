@@ -1,17 +1,14 @@
 package nBankTests.ui.iteration_1;
 
 import api.models.customer.GetAccountsResponse;
+import api.requests.steps.UserSteps;
 import api.storage.SessionStorage;
+import api.utils.AccountData;
 import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import api.requests.steps.AdminSteps;
-import api.requests.steps.UserSteps;
 import ui.pages.BankAlert;
 import ui.pages.UserDashboard;
-import api.utils.AccountData;
-import api.utils.UserData;
 
 import java.util.List;
 
@@ -19,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateAccountTest extends BaseUiTest {
     private static AccountData createdAccount;
-
 
     @Test
     @UserSession
@@ -33,14 +29,10 @@ public class CreateAccountTest extends BaseUiTest {
 
         new UserDashboard().checkAlertMessageAndAccept
                 (BankAlert.NEW_ACCOUNT_CREATED.getMessage() + createdAccount.accountNumber());
-
+        SessionStorage.printState();
         assertThat(createdAccount.balance()).isZero();
-    }
 
-    @AfterAll
-    public static void deleteTestData() {
-//        UserSteps.deleteAccount(user, createdAccount.id());
-
+        UserSteps.deleteAccount(SessionStorage.getUser(), createdAccount.id());
     }
 }
 

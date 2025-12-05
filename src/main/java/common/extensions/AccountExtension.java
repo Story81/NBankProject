@@ -10,11 +10,7 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static api.requests.steps.UserSteps.addAccountToAccountsIdsMap;
 
 @Order(2)
 public class AccountExtension implements BeforeEachCallback, AfterEachCallback {
@@ -22,18 +18,27 @@ public class AccountExtension implements BeforeEachCallback, AfterEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        if (SessionStorage.getAllUsers().isEmpty()) {
-            throw new IllegalStateException(
-                    "User must be created before account. Use @UserSession first.");
-        }
+        List<UserData> allUsers = SessionStorage.getAllUsers();
+
 
         Account annotation = context.getRequiredTestMethod().getAnnotation(Account.class);
         if (annotation != null) {
-            UserData user = SessionStorage.getUser(annotation.user());
+            if (SessionStorage.getAllUsers().isEmpty()) {
+                throw new IllegalStateException(
+                        "Users are not created.");
+            }
 
-            for (int i = 0; i < annotation.value(); i++) {
-                AccountData account = UserSteps.createAccount(user);
-                SessionStorage.addAccount(user, account); // автоматически сохраняет ID
+            int totalUsers = annotation.user(); // сколько пользователей затронуть
+            int accountsPerUser = annotation.value();    // сколько счетов на каждого необъодимо создать
+
+            // Берём первых N пользователей
+            List<UserData> targetUsers = allUsers.subList(0, totalUsers);
+
+            for (UserData user : targetUsers) {
+                for (int i = 0; i < accountsPerUser; i++) {
+                    AccountData account = UserSteps.createAccount(user);
+                    SessionStorage.addAccount(user, account);
+                }
             }
         }
     }

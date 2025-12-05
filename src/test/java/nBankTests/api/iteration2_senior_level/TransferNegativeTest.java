@@ -1,54 +1,40 @@
 package nBankTests.api.iteration2_senior_level;
 
+import api.generatos.RandomData;
 import api.models.accounts.TransferMoneyRequest;
+import api.requests.skeleton.Endpoint;
+import api.requests.skeleton.requesters.CrudRequester;
+import api.requests.steps.UserSteps;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
+import api.storage.SessionStorage;
+import api.utils.AccountData;
+import api.utils.UserData;
+import common.annotations.Account;
+import common.annotations.UserSession;
 import nBankTests.api.BaseTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import api.requests.skeleton.Endpoint;
-import api.requests.skeleton.requesters.CrudRequester;
-import api.requests.steps.AdminSteps;
-import api.requests.steps.UserSteps;
-import api.specs.RequestSpecs;
-import api.specs.ResponseSpecs;
-import api.utils.AccountData;
-import api.utils.UserData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static api.generatos.RandomData.generateRandomAccountId;
 import static api.generatos.RandomData.getDepositAmount;
+import static api.models.BankAlert.INVALID_TRANSFER_ERROR_MESSAGE;
+import static api.models.BankAlert.UNAUTHORIZED_ACCESS_ERROR;
 import static org.assertj.core.api.AssertionsForClassTypes.within;
 
 public class TransferNegativeTest extends BaseTest {
-    private static UserData user;
-    private static AccountData account;
-    private static AccountData receiverAccount;
-    private static final Double MIN_DEPOSIT_AMOUNT = 0.01;
-    private static Map<UserData, List<Integer>> accountsIds = new HashMap<>();
-    private static final String INVALID_TRANSFER_ERROR_MESSAGE = "Invalid transfer: insufficient funds or invalid accounts";
-    private static final String UNAUTHORIZED_ACCESS_ERROR = "Unauthorized access to account";
-
-
-    @BeforeAll
-    public static void createTestData() {
-        user = AdminSteps.createUser();
-        account = UserSteps.createAndDepositAccount(user, MIN_DEPOSIT_AMOUNT, 1);
-        receiverAccount = UserSteps.createAndDepositAccount(user, null, null);
-
-        addAccountToAccountsIdsMap(user, account);
-        addAccountToAccountsIdsMap(user, receiverAccount);
-    }
 
     @Test
+    @UserSession
+    @Account(value = 2)
     public void userCanNotTransferWhenTransferAmountExceedsAccountBalance() {
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getAccount(user, 1);
+        AccountData receiverAccount = SessionStorage.getAccount(user, 2);
         Double amount = getDepositAmount();
 
         double balanceAccountBeforeTransfer = UserSteps.getBalance(user, account);
@@ -62,7 +48,7 @@ public class TransferNegativeTest extends BaseTest {
 
         new CrudRequester(RequestSpecs.authAsUser(user.username(), user.password()),
                 Endpoint.ACCOUNT_TRANSFER,
-                ResponseSpecs.requestReturns400WithoutKeyValue(INVALID_TRANSFER_ERROR_MESSAGE))
+                ResponseSpecs.requestReturns400WithoutKeyValue(INVALID_TRANSFER_ERROR_MESSAGE.getMessage()))
                 .post(transferMoneyRequest);
 
         double currentBalanceAccount = UserSteps.getBalance(user, account);
@@ -72,7 +58,12 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
+    @UserSession
+    @Account
     public void userCanNotTransferOnNonExistentAccount() {
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getAccount(user, 1);
+
         Double amount = getDepositAmount();
         int receiverAccountId = generateRandomAccountId();
 
@@ -86,7 +77,7 @@ public class TransferNegativeTest extends BaseTest {
 
         new CrudRequester(RequestSpecs.authAsUser(user.username(), user.password()),
                 Endpoint.ACCOUNT_TRANSFER,
-                ResponseSpecs.requestReturns400WithoutKeyValue(INVALID_TRANSFER_ERROR_MESSAGE))
+                ResponseSpecs.requestReturns400WithoutKeyValue(INVALID_TRANSFER_ERROR_MESSAGE.getMessage()))
                 .post(transferMoneyRequest);
 
         double currentBalanceAccount = UserSteps.getBalance(user, account);
@@ -94,7 +85,11 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
+    @UserSession
+    @Account(value = 2)
     public void userCanNotTransferFromNonExistentAccount() {
+        UserData user = SessionStorage.getUser();
+        AccountData receiverAccount = SessionStorage.getAccount(user, 1);
         int accountId = generateRandomAccountId();
         Double amount = getDepositAmount();
 
@@ -108,7 +103,7 @@ public class TransferNegativeTest extends BaseTest {
 
         new CrudRequester(RequestSpecs.authAsUser(user.username(), user.password()),
                 Endpoint.ACCOUNT_TRANSFER,
-                ResponseSpecs.requestReturnsForbidden(UNAUTHORIZED_ACCESS_ERROR))
+                ResponseSpecs.requestReturnsForbidden(UNAUTHORIZED_ACCESS_ERROR.getMessage()))
                 .post(transferMoneyRequest);
 
         double balanceReceiverAccount = UserSteps.getBalance(user, receiverAccount);
@@ -116,7 +111,12 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
+    @UserSession
+    @Account(value = 2)
     public void userCanNotTransferWithExpiredAuthToken() {
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getAccount(user, 1);
+        AccountData receiverAccount = SessionStorage.getAccount(user, 2);
         Double amount = getDepositAmount();
 
         double balanceAccountBeforeTransfer = UserSteps.getBalance(user, account);
@@ -141,7 +141,12 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
+    @UserSession
+    @Account(value = 2)
     public void userCannotTransferWithoutToken() {
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getAccount(user, 1);
+        AccountData receiverAccount = SessionStorage.getAccount(user, 2);
         Double amount = getDepositAmount();
         double balanceAccountBeforeTransfer = UserSteps.getBalance(user, account);
         double balanceReceiverAccountBeforeTransfer = UserSteps.getBalance(user, receiverAccount);
@@ -174,7 +179,12 @@ public class TransferNegativeTest extends BaseTest {
 
     @ParameterizedTest
     @MethodSource("transferInvalidData")
+    @UserSession
+    @Account(value = 2)
     public void userCanNotTransferWithIncorrectAmountTest(Double amount, String errorMessage) {
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getAccount(user, 1);
+        AccountData receiverAccount = SessionStorage.getAccount(user, 2);
         double balanceAccountBeforeTransfer = UserSteps.getBalance(user, account);
         double balanceReceiverAccountBeforeTransfer = UserSteps.getBalance(user, receiverAccount);
 
@@ -197,17 +207,23 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     public static Stream<Arguments> invalidTransferRequests() {
+        Integer randomId = RandomData.generateRandomAccountId();
         return Stream.of(
-                Arguments.of(user, null, receiverAccount.id(), getDepositAmount()),
-                Arguments.of(user, account.id(), null, getDepositAmount()),
-                Arguments.of(user, account.id(), receiverAccount.id(), null)
+                Arguments.of(null, randomId, getDepositAmount()),
+                Arguments.of(randomId, null, getDepositAmount()),
+                Arguments.of(randomId, randomId, null)
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidTransferRequests")
-    public void userCannotTransferWithNullFields(UserData user, Integer senderAccountId, Integer receiverAccountId,
+    @UserSession
+    @Account(value = 2)
+    public void userCannotTransferWithNullFields(Integer senderAccountId, Integer receiverAccountId,
                                                  Double amount) {
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getAccount(user, 1);
+        AccountData receiverAccount = SessionStorage.getAccount(user, 2);
         double balanceAccountBeforeTransfer = UserSteps.getBalance(user, account);
         double balanceReceiverAccountBeforeTransfer = UserSteps.getBalance(user, receiverAccount);
 
@@ -228,16 +244,5 @@ public class TransferNegativeTest extends BaseTest {
 
         double currentBalanceReceiverAccount = UserSteps.getBalance(user, receiverAccount);
         softly.assertThat(currentBalanceReceiverAccount).isCloseTo(balanceReceiverAccountBeforeTransfer, within(0.01));
-    }
-
-    //вспомогательные методы
-    public static void addAccountToAccountsIdsMap(UserData user, AccountData account) {
-        accountsIds.computeIfAbsent(user, k -> new ArrayList<>()).add(account.id());
-    }
-
-    @AfterAll
-    public static void deleteTestData() {
-        UserSteps.deleteAllAccounts(accountsIds);
-        AdminSteps.deleteUser(user);
     }
 }
