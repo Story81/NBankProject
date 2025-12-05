@@ -1,22 +1,24 @@
 package nBankTests.api.iteration1_senior_level;
 
-import generatos.RandomModelGenerator;
-import models.admin.CreateUserRequest;
-import models.admin.CreateUserResponse;
-import models.loginUser.LoginUserRequest;
+import api.generatos.RandomModelGenerator;
+import api.models.admin.CreateUserRequest;
+import api.models.admin.CreateUserResponse;
+import api.models.loginUser.LoginUserRequest;
+import common.annotations.Browsers;
 import nBankTests.api.BaseTest;
+import nBankTests.ui.BaseUiTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.skeleton.Endpoint;
-import requests.skeleton.requesters.CrudRequester;
-import requests.skeleton.requesters.ValidatedCrudRequester;
-import requests.steps.AdminSteps;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
-import utils.UserData;
+import api.requests.skeleton.Endpoint;
+import api.requests.skeleton.requesters.CrudRequester;
+import api.requests.skeleton.requesters.ValidatedCrudRequester;
+import api.requests.steps.AdminSteps;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
+import api.utils.UserData;
 
-import static specs.ResponseSpecs.AUTHORIZATION_HEADER;
+import static api.specs.ResponseSpecs.AUTHORIZATION_HEADER;
 
 public class LoginUserTest extends BaseTest {
     private static UserData user;
@@ -57,6 +59,6 @@ public class LoginUserTest extends BaseTest {
 
     @AfterAll
     public static void deleteTestData() {
-        AdminSteps.deleteUser(user);
+//        AdminSteps.deleteUser(user);
     }
 }

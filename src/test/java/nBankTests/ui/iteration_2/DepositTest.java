@@ -1,21 +1,24 @@
 package nBankTests.ui.iteration_2;
 
+import api.storage.SessionStorage;
 import com.codeborne.selenide.WebDriverRunner;
+import common.annotations.Account;
+import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
 import ui.pages.UserDashboard;
-import utils.AccountData;
-import utils.UserData;
+import api.utils.AccountData;
+import api.utils.UserData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static generatos.RandomData.getDepositAmount;
+import static api.generatos.RandomData.getDepositAmount;
 import static nBankTests.api.iteration2_senior_level.TransferPositiveTest.addAccountToAccountsIdsMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.within;
@@ -32,6 +35,8 @@ public class DepositTest extends BaseUiTest {
 
 
     @Test
+    @UserSession
+    @Account
     public void userCanDepositAndBalanceChangesCorrectlyTest() {
         //создаем тестовые данные
         user = AdminSteps.createUser();
@@ -41,7 +46,7 @@ public class DepositTest extends BaseUiTest {
         String accountNumber = account.accountNumber();
         Double depositAmount = getDepositAmount();
 
-        authAsUser(user);
+//        authAsUser(user);
 
         dashboard.open()
                 .clickDepositButton()
@@ -63,17 +68,20 @@ public class DepositTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
+    @Account
     public void userCanNotDepositWithEmptyAccount() {
-        //создаем тестовые данные
-        user = AdminSteps.createUser();
-        createdUserIds.add(user);
-        account = UserSteps.createAccount(user);
+
+        user = SessionStorage.getUser();
+//        createdUserIds.add(user);
+//        account = UserSteps.createAccount(user);
+        account = SessionStorage.getFirstAccount(user);
         addAccountToAccountsIdsMap(user, account);
         String accountNumber = account.accountNumber();
         Double depositAmount = getDepositAmount();
         Double accountBalanceBeforeDeposit = UserSteps.getBalance(user, account);
 
-        authAsUser(user);
+//        authAsUser(user);
 
         dashboard.open()
                 .clickDepositButton()
@@ -91,6 +99,7 @@ public class DepositTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
     public void userCanNotDepositWithEmptyAmount() {
         //создаем тестовые данные
         user = AdminSteps.createUser();
@@ -100,7 +109,7 @@ public class DepositTest extends BaseUiTest {
         String accountNumber = account.accountNumber();
         Double accountBalanceBeforeDeposit = UserSteps.getBalance(user, account);
 
-        authAsUser(user);
+//        authAsUser(user);
 
         dashboard.open()
                 .clickDepositButton()
@@ -119,6 +128,7 @@ public class DepositTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
     public void userCanNotDepositWithInvalidAmount() {
         //создаем тестовые данные
         user = AdminSteps.createUser();
@@ -129,7 +139,7 @@ public class DepositTest extends BaseUiTest {
         Double invalidDepositAmount = getDepositAmount() * -1;
         Double accountBalanceBeforeDeposit = UserSteps.getBalance(user, account);
 
-        authAsUser(user);
+//        authAsUser(user);
 
         dashboard.open()
                 .clickDepositButton()
@@ -150,7 +160,7 @@ public class DepositTest extends BaseUiTest {
 
     @AfterAll
     public static void deleteTestData() {
-        UserSteps.deleteAllAccounts(accountsIds);
-        AdminSteps.deleteAllUsers(createdUserIds);
+//        UserSteps.deleteAllAccounts(accountsIds);
+//        AdminSteps.deleteAllUsers(createdUserIds);
     }
 }

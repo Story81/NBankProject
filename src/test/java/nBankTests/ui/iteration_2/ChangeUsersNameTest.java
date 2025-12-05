@@ -1,16 +1,18 @@
 package nBankTests.ui.iteration_2;
 
-import generatos.RandomData;
-import models.comparison.ModelAssertions;
+import api.generatos.RandomData;
+import api.models.comparison.ModelAssertions;
+import api.storage.SessionStorage;
+import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
 import ui.pages.HeaderPanel;
 import ui.pages.ProfilePage;
 import ui.pages.UserDashboard;
-import utils.UserData;
+import api.utils.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +30,10 @@ public class ChangeUsersNameTest extends BaseUiTest {
 
 
     @Test
+    @UserSession
     public void UserCanChangeNameTest() {
-        user = AdminSteps.createUser();
         String newName = RandomData.getRandomFullName();
-
-        authAsUser(user);
+        user = SessionStorage.getUser();
 
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -56,11 +57,10 @@ public class ChangeUsersNameTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
     public void UserCanNotChangeNameWithEmptyNewNameTest() {
-        user = AdminSteps.createUser();
+        user = SessionStorage.getUser();
         createdUserIds.add(user);
-
-        authAsUser(user);
 
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -83,13 +83,11 @@ public class ChangeUsersNameTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
     public void UserCanNotChangeNameWithInvalidNewNameTest() {
-        user = AdminSteps.createUser();
+        user = SessionStorage.getUser();
         createdUserIds.add(user);
         String newName = RandomData.getUserName();
-
-        authAsUser(user);
-
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
         ProfilePage profilePage = headerPanel

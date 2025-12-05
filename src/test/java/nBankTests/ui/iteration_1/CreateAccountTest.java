@@ -1,34 +1,32 @@
 package nBankTests.ui.iteration_1;
 
-import models.customer.GetAccountsResponse;
+import api.models.customer.GetAccountsResponse;
+import api.storage.SessionStorage;
+import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
 import ui.pages.BankAlert;
 import ui.pages.UserDashboard;
-import utils.AccountData;
-import utils.UserData;
+import api.utils.AccountData;
+import api.utils.UserData;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateAccountTest extends BaseUiTest {
-    private static UserData user;
     private static AccountData createdAccount;
 
 
     @Test
+    @UserSession
     public void userCanCreateAccountTest() {
-        user = AdminSteps.createUser();
-        authAsUser(user);
+        new UserDashboard().open().createNewAccount();
 
-        new UserDashboard().open()
-                .createNewAccount();
-
-        List<GetAccountsResponse> existingUserAccounts = UserSteps.getAccounts(user);
+        List<GetAccountsResponse> existingUserAccounts = SessionStorage.getSteps().getAllAccounts();
         assertThat(existingUserAccounts).hasSize(1);
 
         createdAccount = new AccountData(existingUserAccounts.get(0));
@@ -41,8 +39,8 @@ public class CreateAccountTest extends BaseUiTest {
 
     @AfterAll
     public static void deleteTestData() {
-        UserSteps.deleteAccount(user, createdAccount.id());
-        AdminSteps.deleteUser(user);
+//        UserSteps.deleteAccount(user, createdAccount.id());
+
     }
 }
 

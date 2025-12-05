@@ -1,13 +1,13 @@
 package nBankTests.api.iteration1_senior_level;
 
-import models.customer.GetAccountsResponse;
+import api.models.customer.GetAccountsResponse;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
-import utils.AccountData;
-import utils.UserData;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
+import api.utils.AccountData;
+import api.utils.UserData;
 
 import java.util.List;
 

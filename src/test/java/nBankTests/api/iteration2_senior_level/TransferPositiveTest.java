@@ -1,23 +1,23 @@
 package nBankTests.api.iteration2_senior_level;
 
-import generatos.RandomData;
-import models.accounts.TransferMoneyRequest;
-import models.accounts.TransferMoneyResponse;
-import models.comparison.ModelAssertions;
+import api.generatos.RandomData;
+import api.models.accounts.TransferMoneyRequest;
+import api.models.accounts.TransferMoneyResponse;
+import api.models.comparison.ModelAssertions;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.skeleton.Endpoint;
-import requests.skeleton.requesters.ValidatedCrudRequester;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
-import utils.AccountData;
-import utils.UserData;
+import api.requests.skeleton.Endpoint;
+import api.requests.skeleton.requesters.ValidatedCrudRequester;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
+import api.utils.AccountData;
+import api.utils.UserData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static models.accounts.TransferMoneyResponse.TRANSFER_SUCCESSFUL;
+import static api.models.accounts.TransferMoneyResponse.TRANSFER_SUCCESSFUL;
 import static org.assertj.core.api.AssertionsForClassTypes.within;
 
 public class TransferPositiveTest extends BaseTest {

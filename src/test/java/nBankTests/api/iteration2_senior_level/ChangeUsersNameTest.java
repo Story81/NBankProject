@@ -1,28 +1,28 @@
 package nBankTests.api.iteration2_senior_level;
 
-import generatos.RandomData;
-import models.comparison.ModelAssertions;
-import models.customer.UpdateCustomerProfileRequest;
-import models.customer.UpdateCustomerProfileResponse;
+import api.generatos.RandomData;
+import api.models.comparison.ModelAssertions;
+import api.models.customer.UpdateCustomerProfileRequest;
+import api.models.customer.UpdateCustomerProfileResponse;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.skeleton.Endpoint;
-import requests.skeleton.requesters.CrudRequester;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
-import utils.UserData;
+import api.requests.skeleton.Endpoint;
+import api.requests.skeleton.requesters.CrudRequester;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
+import api.utils.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static utils.UserData.UNUSED;
+import static api.utils.UserData.UNUSED;
 
 
 public class ChangeUsersNameTest extends BaseTest {

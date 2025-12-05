@@ -1,23 +1,23 @@
 package nBankTests.ui.iteration_2;
 
-import generatos.RandomData;
+import api.generatos.RandomData;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
 import ui.pages.TransferPage;
 import ui.pages.UserDashboard;
-import utils.AccountData;
-import utils.UserData;
+import api.utils.AccountData;
+import api.utils.UserData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static generatos.RandomData.generateRandomAccountId;
-import static generatos.RandomData.getDepositAmount;
+import static api.generatos.RandomData.generateRandomAccountId;
+import static api.generatos.RandomData.getDepositAmount;
 import static nBankTests.api.iteration2_senior_level.TransferPositiveTest.addAccountToAccountsIdsMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.within;
@@ -50,7 +50,7 @@ public class TransferTest extends BaseUiTest {
         String userName = RandomData.getUserName();
 
         //шаги
-        authAsUser(user);
+//        authAsUser(user);
 
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();           // юзер кликает на Make a Transfer
@@ -95,7 +95,7 @@ public class TransferTest extends BaseUiTest {
         Double accountBalanceBeforeTransfer_2 = UserSteps.getBalance(user, account_2);
 
         //шаги
-        authAsUser(user);
+//        authAsUser(user);
 
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();           // юзер кликает на Make a Transfer
@@ -138,7 +138,7 @@ public class TransferTest extends BaseUiTest {
         String userName = RandomData.getUserName();
 
         //шаги
-        authAsUser(user);
+//        authAsUser(user);
 
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();            // юзер кликает на Make a Transfer
@@ -178,7 +178,7 @@ public class TransferTest extends BaseUiTest {
         String userName = RandomData.getUserName();
 
         //шаги
-        authAsUser(user);
+//        authAsUser(user);
 
         TransferPage transferPage = dashboard.open()
                 .clickTransferButton();           // юзер кликает на Make a Transfer

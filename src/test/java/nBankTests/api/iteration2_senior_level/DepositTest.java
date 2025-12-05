@@ -1,11 +1,11 @@
 package nBankTests.api.iteration2_senior_level;
 
-import generatos.RandomData;
-import models.accounts.OperationType;
-import models.accounts.Transaction;
-import models.accounts.DepositMoneyRequest;
-import models.accounts.DepositMoneyResponse;
-import models.comparison.ModelAssertions;
+import api.generatos.RandomData;
+import api.models.accounts.OperationType;
+import api.models.accounts.Transaction;
+import api.models.accounts.DepositMoneyRequest;
+import api.models.accounts.DepositMoneyResponse;
+import api.models.comparison.ModelAssertions;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,18 +13,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.skeleton.Endpoint;
-import requests.skeleton.requesters.CrudRequester;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
-import utils.AccountData;
-import utils.UserData;
+import api.requests.skeleton.Endpoint;
+import api.requests.skeleton.requesters.CrudRequester;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
+import api.utils.AccountData;
+import api.utils.UserData;
 
 import java.util.stream.Stream;
 
-import static generatos.RandomData.getDepositAmount;
+import static api.generatos.RandomData.getDepositAmount;
 import static org.assertj.core.api.Assertions.within;
 
 public class DepositTest extends BaseTest {
