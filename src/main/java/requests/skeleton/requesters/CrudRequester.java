@@ -8,10 +8,11 @@ import models.BaseModel;
 import requests.skeleton.Endpoint;
 import requests.skeleton.HttpRequest;
 import requests.skeleton.interfaces.ICrudEndpoint;
+import requests.skeleton.interfaces.IGetAllEndpoint;
 
 import static io.restassured.RestAssured.given;
 
-public class CrudRequester extends HttpRequest implements ICrudEndpoint {
+public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAllEndpoint {
     public CrudRequester(RequestSpecification requestSpec, Endpoint endpoint, ResponseSpecification responseSpec) {
         super(requestSpec, endpoint, responseSpec);
     }
@@ -64,6 +65,15 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint {
                 .when()
                 .delete(endpoint.getUrl())
                 .then()
+                .spec(responseSpec);
+    }
+
+    @Override
+    public ValidatableResponse getAll(Class<?> clazz) {
+        return given()
+                .spec(requestSpec)
+                .get(endpoint.getUrl())
+                .then().assertThat()
                 .spec(responseSpec);
     }
 }

@@ -18,4 +18,11 @@ public class CreateUserRequest extends BaseModel {
     @GeneratingRule(regex = "^USER$")
     private String role;
 
+    public static CreateUserRequest getAdmin() {
+        return CreateUserRequest.builder()
+                .username(configs.Config.getProperty("admin.username"))
+                .password(configs.Config.getProperty("admin.password"))
+                .build();
+    }
+
 }

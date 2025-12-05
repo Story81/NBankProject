@@ -1,10 +1,10 @@
-package nBankTests.iteration2_senior_level;
+package nBankTests.api.iteration2_senior_level;
 
 import generatos.RandomData;
 import models.comparison.ModelAssertions;
 import models.customer.UpdateCustomerProfileRequest;
 import models.customer.UpdateCustomerProfileResponse;
-import nBankTests.BaseTest;
+import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

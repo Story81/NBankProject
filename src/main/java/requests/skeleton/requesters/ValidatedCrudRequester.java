@@ -6,8 +6,12 @@ import models.BaseModel;
 import requests.skeleton.Endpoint;
 import requests.skeleton.HttpRequest;
 import requests.skeleton.interfaces.ICrudEndpoint;
+import requests.skeleton.interfaces.IGetAllEndpoint;
 
-public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest implements ICrudEndpoint {
+import java.util.Arrays;
+import java.util.List;
+
+public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest implements ICrudEndpoint, IGetAllEndpoint {
     private CrudRequester crudRequester;
 
     public ValidatedCrudRequester(RequestSpecification requestSpec, Endpoint endpoint, ResponseSpecification responseSpec) {
@@ -43,5 +47,13 @@ public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest imp
                 .delete(id)
                 .extract()
                 .as(endpoint.getResponseModel());
+    }
+
+    @Override
+    public List<T> getAll(Class<?> clazz) {
+        T[] array = (T[]) crudRequester
+                .getAll(clazz)
+                .extract().as(clazz);
+        return Arrays.asList(array);
     }
 }

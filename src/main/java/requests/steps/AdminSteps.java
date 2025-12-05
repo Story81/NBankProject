@@ -6,6 +6,7 @@ import models.admin.CreateUserRequest;
 import models.admin.CreateUserResponse;
 import requests.skeleton.Endpoint;
 import requests.skeleton.requesters.CrudRequester;
+import requests.skeleton.requesters.ValidatedCrudRequester;
 import specs.RequestSpecs;
 import specs.ResponseSpecs;
 import utils.UserData;
@@ -54,5 +55,13 @@ public class AdminSteps {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public static List<CreateUserResponse> getAllUsers() {
+        return new ValidatedCrudRequester<CreateUserResponse>(
+                RequestSpecs.adminSpec(),
+                Endpoint.ADMIN_USER,
+                ResponseSpecs.requestReturnsOK())
+                .getAll(CreateUserResponse[].class);
     }
 }

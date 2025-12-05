@@ -1,10 +1,10 @@
-package nBankTests.iteration1_senior_level;
+package nBankTests.api.iteration1_senior_level;
 
 import generatos.RandomModelGenerator;
 import models.admin.CreateUserRequest;
 import models.admin.CreateUserResponse;
 import models.loginUser.LoginUserRequest;
-import nBankTests.BaseTest;
+import nBankTests.api.BaseTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
