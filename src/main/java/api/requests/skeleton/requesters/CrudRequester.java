@@ -25,7 +25,6 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
                 .body(body)
                 .post(endpoint.getUrl())
                 .then()
-                .assertThat()
                 .spec(responseSpec);
     }
 
@@ -53,7 +52,6 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
                 .body(model)
                 .put(endpoint.getUrl())
                 .then()
-                .assertThat()
                 .spec(responseSpec);
     }
 
@@ -73,7 +71,7 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
         return given()
                 .spec(requestSpec)
                 .get(endpoint.getUrl())
-                .then().assertThat()
+                .then()
                 .spec(responseSpec);
     }
 }

@@ -29,10 +29,6 @@ public class CreateAccountTest extends BaseTest {
         softly.assertThat(createdAccount).isEqualTo(retrievedAccount);
         createdAccount.assertIsValidNewAccount(softly);
         retrievedAccount.assertIsValidNewAccount(softly);
-    }
-
-    @AfterAll
-    public static void deleteTestData() {
         UserSteps.deleteAccount(user, createdAccount.id());
     }
 }
