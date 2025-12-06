@@ -1,13 +1,14 @@
 package nBankTests.api.iteration1_senior_level;
 
-import models.customer.GetAccountsResponse;
+import api.models.customer.GetAccountsResponse;
+import api.requests.steps.UserSteps;
+import api.storage.SessionStorage;
+import api.utils.AccountData;
+import api.utils.UserData;
+import common.annotations.UserSession;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
-import utils.AccountData;
-import utils.UserData;
 
 import java.util.List;
 
@@ -17,8 +18,9 @@ public class CreateAccountTest extends BaseTest {
     private static UserData user;
 
     @Test
+    @UserSession
     public void userCanCreateAccountTest() {
-        user = AdminSteps.createUser();
+        user = SessionStorage.getUser();
         createdAccount = UserSteps.createAccount(user);
 
         List<GetAccountsResponse> accounts = UserSteps.getAccounts(user);
@@ -32,6 +34,5 @@ public class CreateAccountTest extends BaseTest {
     @AfterAll
     public static void deleteTestData() {
         UserSteps.deleteAccount(user, createdAccount.id());
-        AdminSteps.deleteUser(user);
     }
 }

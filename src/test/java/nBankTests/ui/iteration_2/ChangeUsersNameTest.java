@@ -1,19 +1,16 @@
 package nBankTests.ui.iteration_2;
 
-import generatos.RandomData;
-import models.comparison.ModelAssertions;
+import api.generatos.RandomData;
+import api.models.comparison.ModelAssertions;
+import api.requests.steps.UserSteps;
+import api.storage.SessionStorage;
+import api.utils.UserData;
+import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
 import ui.pages.HeaderPanel;
 import ui.pages.ProfilePage;
 import ui.pages.UserDashboard;
-import utils.UserData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static ui.pages.BankAlert.ERROR_ENTER_VALID_NAME;
 import static ui.pages.BankAlert.ERROR_NAME_MUST_CONTAIN_TWO_WORDS;
@@ -24,15 +21,12 @@ public class ChangeUsersNameTest extends BaseUiTest {
     UserDashboard dashboard = new UserDashboard();
     HeaderPanel headerPanel = new HeaderPanel();
     private static UserData user;
-    private static List<UserData> createdUserIds = new ArrayList<>();
-
 
     @Test
+    @UserSession
     public void UserCanChangeNameTest() {
-        user = AdminSteps.createUser();
         String newName = RandomData.getRandomFullName();
-
-        authAsUser(user);
+        user = SessionStorage.getUser();
 
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -56,11 +50,9 @@ public class ChangeUsersNameTest extends BaseUiTest {
     }
 
     @Test
+    @UserSession
     public void UserCanNotChangeNameWithEmptyNewNameTest() {
-        user = AdminSteps.createUser();
-        createdUserIds.add(user);
-
-        authAsUser(user);
+        user = SessionStorage.getUser();
 
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -78,18 +70,15 @@ public class ChangeUsersNameTest extends BaseUiTest {
                 .checkWelcomeText(DEFAULT_NAME);                 //проверка приветственного заголовка
 
         //проверка имени на бэке через getCustomerProfile
-
         ModelAssertions.assertThatModels(user, UserSteps.getCustomerProfile(user)).match();
     }
 
     @Test
+    @UserSession
     public void UserCanNotChangeNameWithInvalidNewNameTest() {
-        user = AdminSteps.createUser();
-        createdUserIds.add(user);
+        user = SessionStorage.getUser();
+
         String newName = RandomData.getUserName();
-
-        authAsUser(user);
-
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
         ProfilePage profilePage = headerPanel
@@ -108,9 +97,5 @@ public class ChangeUsersNameTest extends BaseUiTest {
 
         //проверка имени на бэке через getCustomerProfile
         ModelAssertions.assertThatModels(user, UserSteps.getCustomerProfile(user)).match();
-    }
-    @AfterAll
-    public static void deleteTestData() {
-        AdminSteps.deleteAllUsers(createdUserIds);
     }
 }

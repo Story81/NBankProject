@@ -13,7 +13,7 @@ public enum BankAlert {
     ERROR_SELECT_AN_ACCOUNT("❌ Please select an account."),
     ERROR_ENTER_VALID_AMOUNT("❌ Please enter a valid amount."),
     ERROR_NO_USER_FOUND_WITH_THIS_ACCOUNT("❌ No user found with this account number."),
-    ERROR_INVALID_TRANSFER("❌ No user found with this account number."),
+    ERROR_INVALID_TRANSFER("❌ Error: Invalid transfer: insufficient funds or invalid accounts"),
     NAME_UPDATE_USER_CREATED_SUCCESSFULLY("✅ Name updated successfully!"),
     ERROR_ENTER_VALID_NAME("❌ Please enter a valid name."),
     ERROR_NAME_MUST_CONTAIN_TWO_WORDS("Name must contain two words with letters only");
