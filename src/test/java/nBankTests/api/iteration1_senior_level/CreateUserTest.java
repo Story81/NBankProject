@@ -1,6 +1,5 @@
 package nBankTests.api.iteration1_senior_level;
 
-
 import api.generatos.RandomModelGenerator;
 import api.models.admin.CreateUserRequest;
 import api.models.admin.CreateUserResponse;
@@ -19,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 
@@ -43,30 +43,30 @@ public class CreateUserTest extends BaseTest {
     public static Stream<Arguments> userInvalidData() {
         return Stream.of(
                 Arguments.of(
-                        CreateUserRequest.builder().username("   ").password("Password33$").role("USER").build(), //тест падает. приходит массив ошибок
-                        "username", "Username cannot be blank. Username must contain only letters, digits, dashes, underscores, and dots"
+                        CreateUserRequest.builder().username("   ").password("Password33$").role("USER").build(),
+                        "username", List.of("Username cannot be blank", "Username must contain only letters, digits, dashes, underscores, and dots")
                 ),
                 Arguments.of(
                         CreateUserRequest.builder().username("ab").password("Password33$").role("USER").build(),
-                        "username", "Username must be between 3 and 15 characters"
+                        "username", List.of("Username must be between 3 and 15 characters")
                 ),
                 Arguments.of(
                         CreateUserRequest.builder().username("abc$").password("Password33$").role("USER").build(),
-                        "username", "Username must contain only letters, digits, dashes, underscores, and dots"
+                        "username", List.of("Username must contain only letters, digits, dashes, underscores, and dots")
                 ),
                 Arguments.of(
                         CreateUserRequest.builder().username("abc%").password("Password33$").role("USER").build(),
-                        "username", "Username must contain only letters, digits, dashes, underscores, and dots"
+                        "username", List.of("Username must contain only letters, digits, dashes, underscores, and dots")
                 )
         );
     }
 
     @MethodSource("userInvalidData")
     @ParameterizedTest
-    public void adminCanNotCreateUserWithInvalidData(CreateUserRequest createUserRequest, String errorKey, String errorValue) {
+    public void adminCanNotCreateUserWithInvalidData(CreateUserRequest createUserRequest, String errorKey, List<String> errorValues) {
         new CrudRequester(RequestSpecs.adminSpec(),
                 Endpoint.ADMIN_USER,
-                ResponseSpecs.requestReturnsBadRequest(errorKey, errorValue))
+                ResponseSpecs.requestReturnsBadRequest(errorKey, errorValues))
                 .post(createUserRequest);
     }
 
