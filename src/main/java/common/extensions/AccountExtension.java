@@ -20,7 +20,6 @@ public class AccountExtension implements BeforeEachCallback, AfterEachCallback {
     public void beforeEach(ExtensionContext context) {
         List<UserData> allUsers = SessionStorage.getAllUsers();
 
-
         Account annotation = context.getRequiredTestMethod().getAnnotation(Account.class);
         if (annotation != null) {
             if (SessionStorage.getAllUsers().isEmpty()) {

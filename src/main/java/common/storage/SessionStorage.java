@@ -12,7 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 public class SessionStorage {
-    private static final SessionStorage INSTANCE = new SessionStorage();
+    /**
+     * ThreadLocal - способ сделать SessionStorage потокобезопасным. Каждый поток получает свою копию
+     * Map<Thread,SessionStorage>
+     */
+    private static final ThreadLocal<SessionStorage> INSTANCE = ThreadLocal.withInitial(SessionStorage:: new);
     private final LinkedHashMap<UserData, UserSteps> userStepsMap = new LinkedHashMap<>();
     private final Map<UserData, List<AccountData>> userAccountsMap = new HashMap<>();
     private final Map<UserData, List<Integer>> userAccountIdsMap = new HashMap<>();
@@ -22,7 +26,7 @@ public class SessionStorage {
     }
     public static void addUsers(List<UserData>users) {
         for (UserData user: users) {
-            INSTANCE.userStepsMap.put(user, new UserSteps(user));
+            INSTANCE.get().userStepsMap.put(user, new UserSteps(user));
         }
     }
 
@@ -32,7 +36,7 @@ public class SessionStorage {
      * @return Объект CreateUserRequest, соответствующий указанному порядковому номеру.
      */
     public static UserData getUser(int number) {
-        return new ArrayList<>(INSTANCE.userStepsMap.keySet()).get(number-1);
+        return new ArrayList<>(INSTANCE.get().userStepsMap.keySet()).get(number-1);
     }
 
     public static UserData getUser() {
@@ -40,11 +44,11 @@ public class SessionStorage {
     }
 
     public static ArrayList<UserData> getAllUsers() {
-        return new ArrayList<>(INSTANCE.userStepsMap.keySet());
+        return new ArrayList<>(INSTANCE.get().userStepsMap.keySet());
     }
 
     public static UserSteps getSteps(int number) {
-        return new ArrayList<>(INSTANCE.userStepsMap.values()).get(number-1);
+        return new ArrayList<>(INSTANCE.get().userStepsMap.values()).get(number-1);
     }
 
     public static UserSteps getSteps() {
@@ -53,18 +57,18 @@ public class SessionStorage {
 
 
     public static void addAccount(UserData user, AccountData account) {
-        INSTANCE.userAccountsMap
+        INSTANCE.get().userAccountsMap
                 .computeIfAbsent(user, k -> new ArrayList<>())
                 .add(account);
 
-        INSTANCE.userAccountIdsMap
+        INSTANCE.get().userAccountIdsMap
                 .computeIfAbsent(user, k -> new ArrayList<>())
                 .add(account.id());
 
     }
 
     public static AccountData getAccount(UserData user, int number) {
-        return INSTANCE.userAccountsMap.get(user).get(number - 1);
+        return INSTANCE.get().userAccountsMap.get(user).get(number - 1);
     }
 
     public static AccountData getFirstAccount(UserData user) {
@@ -72,37 +76,37 @@ public class SessionStorage {
     }
 
     public static void deleteAllCreatedAccounts() {
-        INSTANCE.userAccountIdsMap.forEach((user, ids) -> {
+        INSTANCE.get().userAccountIdsMap.forEach((user, ids) -> {
             if (ids != null && !ids.isEmpty()) {
                 UserSteps.deleteAllAccounts(Map.of(user, ids));
             }
         });
 
-        INSTANCE.userAccountIdsMap.clear();
+        INSTANCE.get().userAccountIdsMap.clear();
         clearAccounts();
     }
 
     public static void clearAccounts() {
-        INSTANCE.userAccountsMap.clear();
+        INSTANCE.get().userAccountsMap.clear();
     }
     public static void clear() {
-        INSTANCE.userStepsMap.clear();
+        INSTANCE.get().userStepsMap.clear();
         clearAccounts();
     }
 
     public static void printState() {
         System.out.println("=== SessionStorage State Dump ===");
 
-        if (INSTANCE.userStepsMap.isEmpty()) {
+        if (INSTANCE.get().userStepsMap.isEmpty()) {
             System.out.println("No users stored.");
             return;
         }
 
         int userIndex = 1;
-        for (Map.Entry<UserData, UserSteps> entry : INSTANCE.userStepsMap.entrySet()) {
+        for (Map.Entry<UserData, UserSteps> entry : INSTANCE.get().userStepsMap.entrySet()) {
             UserData user = entry.getKey();
-            List<AccountData> accounts = INSTANCE.userAccountsMap.getOrDefault(user, Collections.emptyList());
-            List<Integer> accountIds = INSTANCE.userAccountIdsMap.getOrDefault(user, Collections.emptyList());
+            List<AccountData> accounts = INSTANCE.get().userAccountsMap.getOrDefault(user, Collections.emptyList());
+            List<Integer> accountIds = INSTANCE.get().userAccountIdsMap.getOrDefault(user, Collections.emptyList());
 
             System.out.printf("User #%d:%n", userIndex);
             System.out.printf("  - UserData: %s%n", user);
