@@ -1,7 +1,7 @@
 package common.extensions;
 
 import api.requests.steps.UserSteps;
-import api.storage.SessionStorage;
+import common.storage.SessionStorage;
 import api.utils.AccountData;
 import api.utils.UserData;
 import common.annotations.Account;

@@ -1,19 +1,11 @@
 package nBankTests.api.iteration2_senior_level;
 
 import api.generatos.RandomData;
-import api.models.accounts.OperationType;
-import api.models.accounts.Transaction;
 import api.models.accounts.DepositMoneyRequest;
 import api.models.accounts.DepositMoneyResponse;
+import api.models.accounts.OperationType;
+import api.models.accounts.Transaction;
 import api.models.comparison.ModelAssertions;
-import api.storage.SessionStorage;
-import common.annotations.Account;
-import common.annotations.UserSession;
-import nBankTests.api.BaseTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import api.requests.skeleton.Endpoint;
 import api.requests.skeleton.requesters.CrudRequester;
 import api.requests.steps.UserSteps;
@@ -21,6 +13,14 @@ import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import api.utils.AccountData;
 import api.utils.UserData;
+import common.annotations.Account;
+import common.annotations.ApiUserSession;
+import common.storage.SessionStorage;
+import nBankTests.api.BaseTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
@@ -29,15 +29,13 @@ import static api.models.BankAlert.UNAUTHORIZED_ERROR_VALUE;
 import static org.assertj.core.api.Assertions.within;
 
 public class DepositTest extends BaseTest {
-    private static AccountData account_1;
-    private static UserData user_1;
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account
     public void userCanDepositAndBalanceChangesCorrectlyTest() {
-        user_1 = SessionStorage.getUser();
-        account_1 = SessionStorage.getFirstAccount(user_1);
+        UserData user_1 = SessionStorage.getUser();
+        AccountData account_1 = SessionStorage.getFirstAccount(user_1);
 
         // 1. Первый депозит — случайная сумма
         Double firstTransactionAmount = getDepositAmount();
@@ -75,11 +73,12 @@ public class DepositTest extends BaseTest {
 
     @MethodSource("depositInvalidData")
     @ParameterizedTest
-    @UserSession
+    @ApiUserSession
     @Account
     public void userCanNotDepositWithInvalidAmount(Double amount, String errorValue) {
-        user_1 = SessionStorage.getUser();
-        account_1 = SessionStorage.getFirstAccount(user_1);
+        UserData user_1 = SessionStorage.getUser();
+        AccountData account_1 = SessionStorage.getFirstAccount(user_1);
+        SessionStorage.printState();
         double currentBalance = UserSteps.getBalance(user_1, account_1);
 
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
@@ -96,11 +95,11 @@ public class DepositTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCanNotDepositToNotOwnedAccount() {
-        user_1 = SessionStorage.getUser();
-        account_1 = SessionStorage.getAccount(user_1,1);
+        UserData user_1 = SessionStorage.getUser();
+        AccountData account_1 = SessionStorage.getAccount(user_1, 1);
         Integer accountRandomId = RandomData.generateRandomAccountId();
         Double amount = RandomData.getDepositAmount();
         Double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
@@ -119,11 +118,11 @@ public class DepositTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account
     public void userCanNotDepositWithExpiredAuthToken() {
-        user_1 = SessionStorage.getUser();
-        account_1 = SessionStorage.getAccount(user_1,1);
+        UserData user_1 = SessionStorage.getUser();
+        AccountData account_1 = SessionStorage.getAccount(user_1, 1);
         double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
         double amount = RandomData.getDepositAmount();
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
@@ -140,11 +139,11 @@ public class DepositTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account
     public void userCannotDepositWithoutToken() {
-        user_1 = SessionStorage.getUser();
-        account_1 = SessionStorage.getAccount(user_1,1);
+        UserData user_1 = SessionStorage.getUser();
+        AccountData account_1 = SessionStorage.getAccount(user_1, 1);
         double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
         double amount = RandomData.getDepositAmount();
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()
@@ -170,11 +169,11 @@ public class DepositTest extends BaseTest {
 
     @ParameterizedTest
     @MethodSource("invalidDepositRequests")
-    @UserSession
+    @ApiUserSession
     @Account
     public void userCannotDepositWithInvalidFields(Integer id, Double balance) {
-        user_1 = SessionStorage.getUser();
-        account_1 = SessionStorage.getAccount(user_1,1);
+        UserData user_1 = SessionStorage.getUser();
+        AccountData account_1 = SessionStorage.getAccount(user_1, 1);
         double balanceBeforeDeposit = UserSteps.getBalance(user_1, account_1);
 
         DepositMoneyRequest userDepositRequest = DepositMoneyRequest.builder()

@@ -9,11 +9,11 @@ import api.requests.skeleton.requesters.ValidatedCrudRequester;
 import api.requests.steps.UserSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
-import api.storage.SessionStorage;
 import api.utils.AccountData;
 import api.utils.UserData;
 import common.annotations.Account;
-import common.annotations.UserSession;
+import common.annotations.ApiUserSession;
+import common.storage.SessionStorage;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +28,7 @@ public class TransferPositiveTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({"0.01", "0.02", "5000.0", "9999.99", "10000.0"})
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCanTransferToOwnAccountTest(Double amount) {
         UserData user = SessionStorage.getUser();
@@ -61,7 +61,7 @@ public class TransferPositiveTest extends BaseTest {
     }
 
     @Test
-    @UserSession(2)
+    @ApiUserSession(2)
     @Account(user = 2, value = 1)
     public void userCanTransferToAccountOfOtherUserTest() {
         SessionStorage.printState();

@@ -1,6 +1,5 @@
-package api.storage;
+package common.storage;
 
-import api.models.admin.CreateUserRequest;
 import api.requests.steps.UserSteps;
 import api.utils.AccountData;
 import api.utils.UserData;

@@ -1,7 +1,7 @@
 package nBankTests.ui.iteration_2;
 
 import api.requests.steps.UserSteps;
-import api.storage.SessionStorage;
+import common.storage.SessionStorage;
 import api.utils.AccountData;
 import api.utils.UserData;
 import com.codeborne.selenide.WebDriverRunner;
@@ -20,15 +20,13 @@ import static ui.pages.BankAlert.ERROR_SELECT_AN_ACCOUNT;
 
 public class DepositTest extends BaseUiTest {
     UserDashboard dashboard = new UserDashboard();
-    private static AccountData account;
-    private static UserData user;
 
     @Test
     @UserSession
     @Account
     public void userCanDepositAndBalanceChangesCorrectlyTest() {
-        user = SessionStorage.getUser();
-        account = SessionStorage.getFirstAccount(user);
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getFirstAccount(user);
         Double depositAmount = getDepositAmount();
 
         dashboard.open()
@@ -54,9 +52,8 @@ public class DepositTest extends BaseUiTest {
     @UserSession
     @Account
     public void userCanNotDepositWithEmptyAccount() {
-
-        user = SessionStorage.getUser();
-        account = SessionStorage.getFirstAccount(user);
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getFirstAccount(user);
         Double depositAmount = getDepositAmount();
         Double accountBalanceBeforeDeposit = UserSteps.getBalance(user, account);
 
@@ -79,8 +76,8 @@ public class DepositTest extends BaseUiTest {
     @UserSession
     @Account
     public void userCanNotDepositWithEmptyAmount() {
-        user = SessionStorage.getUser();
-        account = SessionStorage.getFirstAccount(user);
+        UserData user = SessionStorage.getUser();
+        AccountData account = SessionStorage.getFirstAccount(user);
         Double accountBalanceBeforeDeposit = UserSteps.getBalance(user, account);
 
         dashboard.open()
@@ -103,8 +100,8 @@ public class DepositTest extends BaseUiTest {
     @UserSession
     @Account
     public void userCanNotDepositWithInvalidAmount() {
-        user = SessionStorage.getUser();
-        account = SessionStorage.getFirstAccount(user);
+        UserData user = SessionStorage.getUser();
+        AccountData  account = SessionStorage.getFirstAccount(user);
         Double invalidDepositAmount = getDepositAmount() * -1;
         Double accountBalanceBeforeDeposit = UserSteps.getBalance(user, account);
 

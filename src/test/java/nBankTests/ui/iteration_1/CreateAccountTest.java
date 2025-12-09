@@ -2,7 +2,7 @@ package nBankTests.ui.iteration_1;
 
 import api.models.customer.GetAccountsResponse;
 import api.requests.steps.UserSteps;
-import api.storage.SessionStorage;
+import common.storage.SessionStorage;
 import api.utils.AccountData;
 import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;

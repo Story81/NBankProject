@@ -17,15 +17,16 @@ public class RandomData {
         return 100_000_000 + RANDOM.nextInt(900_000_000);
     }
     public static String getRandomFullName() {
-        String firstName = RandomStringUtils.randomAlphabetic(5, 10);
-        String lastName = RandomStringUtils.randomAlphabetic(6, 12);
+        String firstName = RandomStringUtils.randomAlphabetic(5 + RANDOM.nextInt(6));
+        String lastName = RandomStringUtils.randomAlphabetic(6 + RANDOM.nextInt(7));
         return firstName + " " + lastName;
     }
 
     public static String getPassword() {
-        return RandomStringUtils.randomAlphabetic(3).toUpperCase() +
-                RandomStringUtils.randomAlphabetic(5).toLowerCase() +
-                RandomStringUtils.randomNumeric(5) + "-!";
+        String upper = RandomStringUtils.randomAlphabetic(3).toUpperCase();
+        String lower = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        String numbers = RandomStringUtils.randomNumeric(5);
+        return upper + lower + numbers + "-!";
     }
 
     public static Double getDepositAmount() {

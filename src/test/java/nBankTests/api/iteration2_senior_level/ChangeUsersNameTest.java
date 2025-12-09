@@ -9,9 +9,9 @@ import api.requests.skeleton.requesters.CrudRequester;
 import api.requests.steps.UserSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
-import api.storage.SessionStorage;
 import api.utils.UserData;
-import common.annotations.UserSession;
+import common.annotations.ApiUserSession;
+import common.storage.SessionStorage;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +26,7 @@ import static api.utils.UserData.UNUSED;
 public class ChangeUsersNameTest extends BaseTest {
 
     @Test
-    @UserSession
+    @ApiUserSession
     public void userCanUpdateName() {
         UserData user = SessionStorage.getUser();
         String newName = RandomData.getRandomFullName();
@@ -49,7 +49,7 @@ public class ChangeUsersNameTest extends BaseTest {
     }
 
     @ParameterizedTest
-    @UserSession
+    @ApiUserSession
     @MethodSource("changeNameInvalidData")
     public void userCanNotUpdateName(String newName, String errorMassage) {
         UserData user = SessionStorage.getUser();
@@ -67,7 +67,7 @@ public class ChangeUsersNameTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     public void userCannotUpdateNameWithInvalidToken() {
         UserData user = SessionStorage.getUser();
         String newName = RandomData.getRandomFullName();
