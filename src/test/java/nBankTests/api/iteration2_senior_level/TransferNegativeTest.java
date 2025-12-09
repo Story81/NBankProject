@@ -7,11 +7,11 @@ import api.requests.skeleton.requesters.CrudRequester;
 import api.requests.steps.UserSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
-import api.storage.SessionStorage;
+import common.annotations.ApiUserSession;
+import common.storage.SessionStorage;
 import api.utils.AccountData;
 import api.utils.UserData;
 import common.annotations.Account;
-import common.annotations.UserSession;
 import nBankTests.api.BaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.within;
 public class TransferNegativeTest extends BaseTest {
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCanNotTransferWhenTransferAmountExceedsAccountBalance() {
         UserData user = SessionStorage.getUser();
@@ -58,7 +58,7 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account
     public void userCanNotTransferOnNonExistentAccount() {
         UserData user = SessionStorage.getUser();
@@ -85,7 +85,7 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCanNotTransferFromNonExistentAccount() {
         UserData user = SessionStorage.getUser();
@@ -111,7 +111,7 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCanNotTransferWithExpiredAuthToken() {
         UserData user = SessionStorage.getUser();
@@ -141,7 +141,7 @@ public class TransferNegativeTest extends BaseTest {
     }
 
     @Test
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCannotTransferWithoutToken() {
         UserData user = SessionStorage.getUser();
@@ -179,7 +179,7 @@ public class TransferNegativeTest extends BaseTest {
 
     @ParameterizedTest
     @MethodSource("transferInvalidData")
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCanNotTransferWithIncorrectAmountTest(Double amount, String errorMessage) {
         UserData user = SessionStorage.getUser();
@@ -217,7 +217,7 @@ public class TransferNegativeTest extends BaseTest {
 
     @ParameterizedTest
     @MethodSource("invalidTransferRequests")
-    @UserSession
+    @ApiUserSession
     @Account(value = 2)
     public void userCannotTransferWithNullFields(Integer senderAccountId, Integer receiverAccountId,
                                                  Double amount) {

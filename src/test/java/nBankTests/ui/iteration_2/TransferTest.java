@@ -1,23 +1,16 @@
 package nBankTests.ui.iteration_2;
 
 import api.generatos.RandomData;
-import api.storage.SessionStorage;
+import common.storage.SessionStorage;
 import common.annotations.Account;
 import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import api.requests.steps.AdminSteps;
 import api.requests.steps.UserSteps;
 import ui.pages.TransferPage;
 import ui.pages.UserDashboard;
 import api.utils.AccountData;
 import api.utils.UserData;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static api.generatos.RandomData.generateRandomAccountId;
 import static api.generatos.RandomData.getDepositAmount;

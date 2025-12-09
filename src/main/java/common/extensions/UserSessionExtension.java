@@ -1,10 +1,8 @@
 package common.extensions;
 
-import api.models.admin.CreateUserRequest;
 import api.requests.steps.AdminSteps;
-import api.storage.SessionStorage;
+import common.storage.SessionStorage;
 import api.utils.UserData;
-import common.annotations.AdminSession;
 import common.annotations.UserSession;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -31,6 +29,7 @@ public class UserSessionExtension implements BeforeEachCallback, AfterEachCallba
             SessionStorage.addUsers(users);
 
             int authAsUser = annotation.auth();
+
             BasePage.authAsUser(SessionStorage.getUser(authAsUser));
         }
     }

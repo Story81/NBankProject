@@ -65,11 +65,13 @@ public abstract class BasePage<T extends BasePage> {
         String userAuthHeader = RequestSpecs.getUserAuthHeader(username, password);
         executeJavaScript("localStorage.setItem('authToken', arguments[0]);", userAuthHeader);
     }
+
     public static void authAsAdmin(CreateUserRequest request) {
         Selenide.open("/");
         String userAuthHeader = RequestSpecs.getUserAuthHeader(request.getUsername(), request.getPassword());
         executeJavaScript("localStorage.setItem('authToken', arguments[0]);", userAuthHeader);
     }
+
     public static void authAsUser(UserData user) {
         authAsUser(user.username(), user.password());
     }
@@ -78,5 +80,4 @@ public abstract class BasePage<T extends BasePage> {
     protected <T extends BaseElement> List<T> generatePageElements(ElementsCollection elementsCollection, Function<SelenideElement, T> constructor) {
         return elementsCollection.stream().map(constructor).toList();
     }
-
 }

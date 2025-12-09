@@ -3,9 +3,9 @@ package nBankTests.ui.iteration_2;
 import api.generatos.RandomData;
 import api.models.comparison.ModelAssertions;
 import api.requests.steps.UserSteps;
-import api.storage.SessionStorage;
 import api.utils.UserData;
 import common.annotations.UserSession;
+import common.storage.SessionStorage;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.Test;
 import ui.pages.HeaderPanel;
@@ -20,13 +20,12 @@ import static ui.pages.UserDashboard.DEFAULT_NAME;
 public class ChangeUsersNameTest extends BaseUiTest {
     UserDashboard dashboard = new UserDashboard();
     HeaderPanel headerPanel = new HeaderPanel();
-    private static UserData user;
 
     @Test
     @UserSession
     public void UserCanChangeNameTest() {
         String newName = RandomData.getRandomFullName();
-        user = SessionStorage.getUser();
+        UserData user = SessionStorage.getUser();
 
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -52,7 +51,7 @@ public class ChangeUsersNameTest extends BaseUiTest {
     @Test
     @UserSession
     public void UserCanNotChangeNameWithEmptyNewNameTest() {
-        user = SessionStorage.getUser();
+        UserData user = SessionStorage.getUser();
 
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка
 
@@ -76,7 +75,7 @@ public class ChangeUsersNameTest extends BaseUiTest {
     @Test
     @UserSession
     public void UserCanNotChangeNameWithInvalidNewNameTest() {
-        user = SessionStorage.getUser();
+        UserData user = SessionStorage.getUser();
 
         String newName = RandomData.getUserName();
         dashboard.open().checkWelcomeText(DEFAULT_NAME); //проверка приветственного заголовка

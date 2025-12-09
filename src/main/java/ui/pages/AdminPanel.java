@@ -30,6 +30,7 @@ public class AdminPanel extends BasePage<AdminPanel> {
     }
 
     public List<UserBage> getAllUsers() {
+        refreshPage();
         ElementsCollection elementsCollection = $(Selectors.byText("All Users")).parent().findAll("li");
         return generatePageElements(elementsCollection, UserBage::new);
     }
@@ -38,7 +39,7 @@ public class AdminPanel extends BasePage<AdminPanel> {
         return RetryUtils.retry(
                 () -> getAllUsers().stream().filter(it -> it.getUsername().equals(username)).findAny().orElse(null),
                 result -> result != null,
-                3,
+                4,
                 2000
         );
     }

@@ -1,6 +1,5 @@
 package api.requests.steps;
 
-import io.restassured.common.mapper.TypeRef;
 import api.models.accounts.CreateAccountResponse;
 import api.models.accounts.DeleteAccountResponse;
 import api.models.accounts.DepositMoneyRequest;
@@ -18,6 +17,7 @@ import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import api.utils.AccountData;
 import api.utils.UserData;
+import io.restassured.common.mapper.TypeRef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +36,7 @@ public class UserSteps {
         this.user = user;
 
     }
+
     public static List<GetAccountsResponse> getAccounts(UserData user) {
         return new CrudRequester(RequestSpecs.authAsUser(user.username(), user.password()),
                 Endpoint.CUSTOMER_ACCOUNTS,
@@ -46,7 +47,7 @@ public class UserSteps {
                 });
     }
 
-    public  List<GetAccountsResponse> getAllAccounts() {
+    public List<GetAccountsResponse> getAllAccounts() {
         return new CrudRequester(RequestSpecs.authAsUser(user.username(), user.password()),
                 Endpoint.CUSTOMER_ACCOUNTS,
                 ResponseSpecs.requestReturnsOK())
@@ -159,6 +160,8 @@ public class UserSteps {
                 .extract()
                 .as(GetCustomerProfileResponse.class);
     }
+
     public static void addAccountToAccountsIdsMap(UserData user, AccountData account) {
         accountsIds.computeIfAbsent(user, k -> new ArrayList<>()).add(account.id());
-    }}
+    }
+}

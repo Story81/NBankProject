@@ -2,6 +2,7 @@ package nBankTests.api;
 
 import common.extensions.AccountExtension;
 import common.extensions.AdminSessionExtension;
+import common.extensions.ApiUserSessionExtension;
 import common.extensions.BrowserMatchExtension;
 import common.extensions.UserSessionExtension;
 import org.assertj.core.api.SoftAssertions;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(AdminSessionExtension.class)
 @ExtendWith(UserSessionExtension.class)
+@ExtendWith(ApiUserSessionExtension.class)
 @ExtendWith(BrowserMatchExtension.class)
 @ExtendWith(AccountExtension.class)
 public class BaseTest {
