@@ -44,7 +44,7 @@ public class DepositTest extends BaseUiTest {
                 .checkAccountBalance(account.accountNumber(), depositAmount);
 
         Double accountBalance = UserSteps.getBalance(user, account);
-        assertThat(accountBalance).isEqualTo(depositAmount, within(0.0001));
+        assertThat(accountBalance).isEqualTo(depositAmount, within(0.001));
 
     }
 

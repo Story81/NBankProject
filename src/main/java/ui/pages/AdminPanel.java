@@ -9,12 +9,15 @@ import ui.elements.UserBage;
 
 import java.util.List;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @Getter
 public class AdminPanel extends BasePage<AdminPanel> {
     private SelenideElement adminPanelText = $(Selectors.byText("Admin Panel"));
     private SelenideElement addUserButton = $(Selectors.byText("Add User"));
+    private SelenideElement allUsersTitle = $(Selectors.byText("All Users"));
+
 
 
     @Override
@@ -30,7 +33,7 @@ public class AdminPanel extends BasePage<AdminPanel> {
     }
 
     public List<UserBage> getAllUsers() {
-        refreshPage();
+        allUsersTitle.shouldBe(visible);
         ElementsCollection elementsCollection = $(Selectors.byText("All Users")).parent().findAll("li");
         return generatePageElements(elementsCollection, UserBage::new);
     }

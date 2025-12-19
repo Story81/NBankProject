@@ -17,16 +17,18 @@ import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import api.utils.AccountData;
 import api.utils.UserData;
+import common.storage.SessionStorage;
+import common.utils.RetryUtils;
 import io.restassured.common.mapper.TypeRef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static api.models.accounts.TransferMoneyResponse.TRANSFER_SUCCESSFUL;
 import static api.models.customer.UpdateCustomerProfileResponse.PROFILE_UPDATED_SUCCESSFULLY;
-//import static common.extensions.AccountExtension.accountsIds;
 
 public class UserSteps {
     private UserData user;
@@ -34,7 +36,6 @@ public class UserSteps {
 
     public UserSteps(UserData user) {
         this.user = user;
-
     }
 
     public static List<GetAccountsResponse> getAccounts(UserData user) {
@@ -55,6 +56,14 @@ public class UserSteps {
                 .extract()
                 .as(new TypeRef<List<GetAccountsResponse>>() {
                 });
+    }
+    public static List <GetAccountsResponse> getAllUserAccounts() {
+        return RetryUtils.retry(
+                () ->  SessionStorage.getSteps().getAllAccounts().stream().collect(Collectors.toList()),
+                result -> result != null,
+                4,
+                1000
+        );
     }
 
     public static double getBalance(UserData user, AccountData account) {
