@@ -12,6 +12,9 @@ target/
 ### HTTP Client auto-saved files ###
 .idea/httpRequests/
 
+# Test output directories
+test-output/
+
 ### Eclipse ###
 .apt_generated
 .classpath
