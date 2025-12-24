@@ -3,7 +3,7 @@ name: Run tests
 # триггер
 on: [ push, workflow_dispatch ]
 
-jobs: # аналог этапов
+jobs: # джобы, аналог этапов
   run-tests:
     name: Set up services (review apps) and run tests
     runs-on: ubuntu-latest    # на какой ранере (агенте) мы хотим выполнять тесты
