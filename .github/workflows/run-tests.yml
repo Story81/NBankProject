@@ -32,12 +32,12 @@ jobs: # джобы, аналог этапов
         run: chmod +x mvnw
 
       - name: Run tests
+        continue-on-error: true
         env:
           APIBASEURL: http://localhost:4111
           UIBASEURL: http://nginx:80
           UIREMOTE: http://localhost:4444/wd/hub
           APIVERSION: /api/v1
-          continue-on-error: true
         run: |
           echo "=== Environment Variables ==="
           echo "UIBASEURL: $UIBASEURL"
