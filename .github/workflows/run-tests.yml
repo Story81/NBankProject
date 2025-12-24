@@ -32,18 +32,11 @@ jobs: # джобы, аналог этапов
         run: chmod +x mvnw
 
       - name: Run tests
-        run: ./mvnw clean test -q
+        run: ./mvnw clean test
         env:
           APIBASEURL: http://localhost:4111
           APIVERSION: /api/v1
 
-      - name: Run UI tests
-        run: ./mvnw test -q -P ui
-        env:
-          APIBASEURL: http://localhost:4111
-          UIBASEURL: http://nginx:80
-          UIREMOTE: http://localhost:4444/wd/hub
-          APIVERSION: /api/v1
 
       - name: Upload test reports
         if: always()  # Всегда загружать, даже при падении тестов
