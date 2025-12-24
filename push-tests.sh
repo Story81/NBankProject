@@ -11,11 +11,11 @@ TAG=latest
 # Логин в Docker Hub с токеном
 echo ">>> Логин в Docker Hub с токеном"
 if [ -z "$DOCKERHUB_USERNAME" ]; then
-  echo "Ошибка: не установлена переменная окружения DOCKERHUB_USERNAME"
+  echo "❌ Ошибка: не установлена переменная окружения DOCKERHUB_USERNAME"
   exit 1
 fi
 if [ -z "$DOCKERHUB_TOKEN" ]; then
-  echo "Ошибка: не установлена переменная окружения DOCKERHUB_TOKEN"
+  echo "❌ Ошибка: не установлена переменная окружения DOCKERHUB_TOKEN"
   exit 1
 fi
 echo "$DOCKERHUB_TOKEN"| docker login --username $DOCKERHUB_USERNAME --password-stdin
@@ -25,7 +25,7 @@ echo "$DOCKERHUB_TOKEN"| docker login --username $DOCKERHUB_USERNAME --password-
 echo ">>> Тегирование образа"
 docker tag  "$IMAGE_NAME" $DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG
 if [ $? -ne 0 ]; then
-  echo "Ошибка: не удалось тегировать образ"
+  echo "❌ Ошибка: не удалось тегировать образ"
   exit 1
 fi
 
@@ -34,11 +34,11 @@ fi
 echo ">>> Отправка образа в Docker Hub"
 docker push "$DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG"
 if [ $? -ne 0 ]; then
-  echo "Ошибка: не удалось отправить образ в Docker Hub"
+  echo "❌ Ошибка: не удалось отправить образ в Docker Hub"
   exit 1
 fi
 
-echo ">>> Готово! Образ доступен как: docker pull $DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG"
+echo ">>> ✅ Готово! Образ доступен как: docker pull $DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG"
 
 #3. Выполните скрипт
 #chmod +x push-tests.sh

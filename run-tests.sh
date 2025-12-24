@@ -32,7 +32,7 @@ docker run --rm \
   "$IMAGE_NAME"
 
 # Вывод итогов
-echo ">>> Тесты завершены <<<"
-echo "Лог файл: $TEST_OUTPUT_DIR/logs/run.log"
+echo "✅ >>> Тесты завершены успешно! "
+echo "Лог файл:          $TEST_OUTPUT_DIR/logs/run.log"
 echo "Результаты тестов: $TEST_OUTPUT_DIR/results"
-echo "Репорт: $TEST_OUTPUT_DIR/report"
+echo "Отчет:             $TEST_OUTPUT_DIR/report"

@@ -28,7 +28,7 @@ USER root
 
 # mvn test -P api
 # mvn -DskipTests=true surfire-report:report-only
-# лог выводился не в консаль, а в файл
+# лог выводился не в консоль, а в файл
 # bash file
 CMD ["/bin/bash","-lc", "\
 mkdir -p /app/logs ; \
