@@ -34,7 +34,8 @@ jobs: # джобы, аналог этапов
       - name: Run tests
         env:
           APIBASEURL: http://localhost:4111
-          UIBASEURL: http://frontend
+          UIBASEURL: http://nginx:80
+          UIREMOTE: http://localhost:4444/wd/hub
           APIVERSION: /api/v1
         run: |
           echo "=== Environment Variables ==="
