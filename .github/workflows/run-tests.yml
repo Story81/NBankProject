@@ -31,19 +31,35 @@ jobs: # джобы, аналог этапов
       - name: Give execute permission to mvnw
         run: chmod +x mvnw
 
+      - name: Debug - Check environment variables
+        run: |
+          echo "=== Environment Variables ==="
+          echo "UIBASEURL: $UIBASEURL"
+          echo "APIBASEURL: $APIBASEURL"
+          echo "=== System Properties ==="
+          ./mvnw help:system
+
+          - name: Debug - Check what URL tests will use
+            run: |
+              echo "=== Searching for baseUrl configuration ==="
+              find . -name "*.properties" -o -name "*.yml" -o -name "*.yaml" | xargs grep -l "baseUrl\|192.168" 2>/dev/null || true
+            
+
       - name: Run tests
         run: ./mvnw clean test
         env:
-          APIBASEURL: http://localhost:4111
-          APIVERSION: /api/v1
+           APIBASEURL: http://localhost:4111
+           UIBASEURL: http://localhost:3000
+           UIREMOTE: http://localhost:4444/wd/hub
+           APIVERSION: /api/v1
 
 
       - name: Upload test reports
         if: always()  # Всегда загружать, даже при падении тестов
         uses: actions/upload-artifact@v4
         with:
-            name: test-reports
-            path: |
-              build/reports/
-              target/surefire-reports/
-            retention-days: 7
+          name: test-reports
+          path: |
+            build/reports/
+            target/surefire-reports/
+          retention-days: 7
