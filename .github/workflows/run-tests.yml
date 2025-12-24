@@ -35,4 +35,22 @@ jobs: # джобы, аналог этапов
         run: ./mvnw clean test -q
         env:
           APIBASEURL: http://localhost:4111
-          UIBASEURL: http://frontend
+          APIVERSION: /api/v1
+
+      - name: Run UI tests
+        run: ./mvnw test -q -P ui
+        env:
+          APIBASEURL: http://localhost:4111
+          UIBASEURL: http://nginx:80
+          UIREMOTE: http://localhost:4444/wd/hub
+          APIVERSION: /api/v1
+
+      - name: Upload test reports
+        if: always()  # Всегда загружать, даже при падении тестов
+        uses: actions/upload-artifact@v4
+        with:
+            name: test-reports
+            path: |
+              build/reports/
+              target/surefire-reports/
+            retention-days: 7
