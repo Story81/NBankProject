@@ -8,16 +8,16 @@ jobs: # джобы, аналог этапов
     name: Set up services (review apps) and run tests
     runs-on: ubuntu-latest    # на какой ранере (агенте) мы хотим выполнять тесты
     steps: # шаги конкретной job
-      - name: Checkout repository # копируем файлы репозитория внутрь CI агента
+      - name: Checkout repository   # шаг 1 - копируем файлы репозитория внутрь CI агента
         uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Set up JDK            # шаг 2 - устанавливаем JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Cache Maven repository
+      - name: Cache Maven repository # шаг 3 - создаем cache Maven repository
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
@@ -25,13 +25,13 @@ jobs: # джобы, аналог этапов
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Set up services
+      - name: Set up services        # шаг 4 - запускаем restart_docker.sh
         run: cd infra/docker_compose && bash restart_docker.sh && cd ../..
 
-      - name: Give execute permission to mvnw
+      - name: Give execute permission to mvnw  # шаг 5- устанавливаем права доступа
         run: chmod +x mvnw
 
-      - name: Run tests
+      - name: Run tests              # шаг 6- запуск тестов
         continue-on-error: true
         env:
           APIBASEURL: http://localhost:4111
@@ -42,19 +42,7 @@ jobs: # джобы, аналог этапов
           echo "=== Environment Variables ==="
           echo "UIBASEURL: $UIBASEURL"
           echo "APIBASEURL: $APIBASEURL"
-          echo "=== System Properties ==="
+          echo "UIREMOTE: $UIREMOTE"
+          echo "=== === ==="
           ./mvnw clean test
 
-      - name: Проверка доступности сервисов
-        run: |
-         echo "1. Проверяем nginx на localhost:80"
-         curl -f http://localhost || echo "NGINX не доступен"
-    
-         echo ""
-         echo "2. Проверяем frontend через nginx"
-         curl -f http://localhost/api/health || echo "Через nginx не работает"
-    
-         echo ""
-         echo "3. Проверяем frontend напрямую из сети"
-         docker run --rm --network nbank-network curlimages/curl \
-         curl -f http://frontend:80 || echo "Frontend напрямую не доступен"  
