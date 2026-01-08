@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static api.requests.steps.UserSteps.getAllUserAccounts;
+
 
 public class CreateAccountTest extends BaseTest {
     private static AccountData createdAccount;
@@ -22,7 +24,7 @@ public class CreateAccountTest extends BaseTest {
         user = SessionStorage.getUser();
         createdAccount = UserSteps.createAccount(user);
 
-        List<GetAccountsResponse> accounts = UserSteps.getAccounts(user);
+        List<GetAccountsResponse> accounts = getAllUserAccounts();
         AccountData retrievedAccount = new AccountData(accounts.get(0));
 
         softly.assertThat(createdAccount).isEqualTo(retrievedAccount);

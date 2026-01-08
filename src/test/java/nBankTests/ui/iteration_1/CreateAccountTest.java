@@ -16,7 +16,6 @@ import static api.requests.steps.UserSteps.getAllUserAccounts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateAccountTest extends BaseUiTest {
-//    private static AccountData createdAccount;
 
     @Test
     @UserSession
