@@ -28,7 +28,7 @@ docker run --rm \
   -v "$TEST_OUTPUT_DIR/report:/app/target/site" \
   -e TEST_PROFILE="$TEST_PROFILE" \
   -e APIBASEURL=http://host.docker.internal:4111 \
-  -e UIBASEURL=http://94.41.189.137 \
+  -e UIBASEURL=http://host.docker.internal:3000 \
   "$IMAGE_NAME"
 
 # Вывод итогов

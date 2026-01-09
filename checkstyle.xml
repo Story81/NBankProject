@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java, properties, xml"/>
+
+    <!-- Важные проверки файлов -->
+    <module name="FileLength">
+        <property name="max" value="2000"/>
+    </module>
+
+    <module name="LineLength">
+        <property name="max" value="130"/>
+        <property name="ignorePattern" value="^ *\* *[^ ]+$|^ *//.*"/>
+    </module>
+
+    <module name="TreeWalker">
+        <!-- === КРИТИЧНЫЕ проверки (всегда включать) === -->
+
+        <!-- 1. Стиль кодирования -->
+        <module name="NeedBraces"/>  <!-- if/else/for всегда с {} -->
+        <module name="EmptyStatement"/>  <!-- нельзя ; без кода -->
+        <module name="AvoidStarImport"/>  <!-- нельзя import java.util.* -->
+
+        <!-- 2. Ненужный код -->
+        <module name="UnusedImports">
+            <property name="processJavadoc" value="false"/>
+        </module>
+        <module name="RedundantImport"/>
+
+        <!-- 3. Имена -->
+        <module name="ConstantName">
+            <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+        </module>
+        <module name="MethodName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+        </module>
+        <module name="TypeName">
+            <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- === ОПЦИОНАЛЬНЫЕ проверки (можно включить позже) === -->
+
+        <!-- Отключить для Lombok DTO -->
+        <module name="VisibilityModifier">
+            <property name="severity" value="warning"/>
+            <property name="protectedAllowed" value="true"/>
+            <property name="publicMemberPattern" value="^serialVersionUID$|^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+        </module>
+
+        <!-- MagicNumber  -->
+        <module name="MagicNumber">
+            <property name="severity" value="warning"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 10, 100, 1000"/>
+            <property name="ignoreFieldDeclaration" value="true"/>
+            <property name="ignoreAnnotation" value="true"/>
+        </module>
+
+        <!-- FinalParameters -->
+        <module name="FinalParameters">
+            <property name="severity" value="warning"/>
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+            <property name="ignorePrimitiveTypes" value="true"/>
+        </module>
+
+        <!-- whitespace проверки -->
+        <module name="WhitespaceAround">
+            <property name="allowEmptyConstructors" value="true"/>
+            <property name="allowEmptyMethods" value="true"/>
+            <property name="allowEmptyTypes" value="true"/>
+        </module>
+
+        <!-- Утилитарные классы (можно доавить позже)-->
+        <module name="HideUtilityClassConstructor">
+        <property name="severity" value="ignore"/>
+    </module>
+    </module>
+</module>

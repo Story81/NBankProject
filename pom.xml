@@ -123,6 +123,15 @@
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+            <!-- Плагин checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
