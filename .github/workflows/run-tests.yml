@@ -50,7 +50,7 @@ jobs: # джобы, аналог этапов
       - name: Run Checkstyle                   # шаг 6 - запуск checkstyle
         run: |
           echo "Running Checkstyle..."
-          ./mvnw checkstyle:check -Dcheckstyle.severity=error
+          ./mvnw checkstyle:check -Dcheckstyle.severity=error -q
           echo "✅ Checkstyle completed successfully"
         env:
           APIBASEURL: http://localhost:4111
