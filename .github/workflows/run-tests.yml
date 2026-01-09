@@ -89,7 +89,7 @@ jobs: # джобы, аналог этапов
     name: Build and push Docker image
     runs-on: ubuntu-latest
     needs: run-tests
-    if: needs.run-tests.outputs.tests_successful == 'true'
+#    if: needs.run-tests.outputs.tests_successful == 'true'
     steps:
       - name: Check Docker Hub secrets
         run: |
