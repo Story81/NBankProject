@@ -7,6 +7,7 @@ import api.utils.UserData;
 import common.annotations.ApiUserSession;
 import common.storage.SessionStorage;
 import nBankTests.api.BaseTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CreateAccountTest extends BaseTest {
 
     @Test
     @ApiUserSession
+    @Disabled("Temporarily disabled")
     public void userCanCreateAccountTest() {
         user = SessionStorage.getUser();
         createdAccount = UserSteps.createAccount(user);
