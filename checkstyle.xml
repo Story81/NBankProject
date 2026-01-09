@@ -52,7 +52,7 @@
             <property name="publicMemberPattern" value="^serialVersionUID$|^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
         </module>
 
-        <!-- Смягченный MagicNumber (только для тестового кода можно отключить) -->
+        <!-- MagicNumber  -->
         <module name="MagicNumber">
             <property name="severity" value="warning"/>
             <property name="ignoreNumbers" value="-1, 0, 1, 2, 10, 100, 1000"/>
@@ -60,33 +60,21 @@
             <property name="ignoreAnnotation" value="true"/>
         </module>
 
-        <!-- FinalParameters - только для публичных API -->
+        <!-- FinalParameters -->
         <module name="FinalParameters">
             <property name="severity" value="warning"/>
             <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
             <property name="ignorePrimitiveTypes" value="true"/>
         </module>
 
-        <!-- === ОТКЛЮЧИТЬ (слишком строгие) === -->
-
-        <!-- Отключить для гибкости -->
-        <module name="DesignForExtension">
-            <property name="severity" value="ignore"/>
-        </module>
-
-        <!-- Не все классы должны быть final -->
-        <module name="FinalClass">
-            <property name="severity" value="ignore"/>
-        </module>
-
-        <!-- Упростить whitespace проверки -->
+        <!-- whitespace проверки -->
         <module name="WhitespaceAround">
             <property name="allowEmptyConstructors" value="true"/>
             <property name="allowEmptyMethods" value="true"/>
             <property name="allowEmptyTypes" value="true"/>
         </module>
 
-        <!-- Утилитарные классы -->
+        <!-- Утилитарные классы (можно доавить позже)-->
         <module name="HideUtilityClassConstructor">
         <property name="severity" value="ignore"/>
     </module>
