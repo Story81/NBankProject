@@ -14,7 +14,8 @@ import java.util.List;
 public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest implements ICrudEndpoint, IGetAllEndpoint {
     private CrudRequester crudRequester;
 
-    public ValidatedCrudRequester(RequestSpecification requestSpec, Endpoint endpoint, ResponseSpecification responseSpec) {
+    public ValidatedCrudRequester(RequestSpecification requestSpec, Endpoint endpoint,
+                                  ResponseSpecification responseSpec) {
         super(requestSpec, endpoint, responseSpec);
         this.crudRequester = new CrudRequester(requestSpec, endpoint, responseSpec);
     }

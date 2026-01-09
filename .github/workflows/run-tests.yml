@@ -11,12 +11,7 @@ on:
     paths:
       - "src/**"
 
-    # 2. При pull request в main/master с изменениями в src
-  pull_request:
-    branches: [ main, master ]
-    paths:
-      - "src/**"
-    # 3. Ручной запуск
+    # 2. Ручной запуск
   workflow_dispatch:
 
 jobs: # джобы, аналог этапов

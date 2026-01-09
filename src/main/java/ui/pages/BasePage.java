@@ -77,7 +77,8 @@ public abstract class BasePage<T extends BasePage> {
     }
 
     //ElementsCollection -> List<BaseElement>
-    protected <T extends BaseElement> List<T> generatePageElements(ElementsCollection elementsCollection, Function<SelenideElement, T> constructor) {
+    protected <T extends BaseElement> List<T> generatePageElements(ElementsCollection elementsCollection,
+                                                                   Function<SelenideElement, T> constructor) {
         return elementsCollection.stream().map(constructor).toList();
     }
 }

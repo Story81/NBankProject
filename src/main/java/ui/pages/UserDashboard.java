@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 @Getter
-public class UserDashboard  extends BasePage<UserDashboard >{
+public class UserDashboard  extends BasePage<UserDashboard> {
     public static final String DEFAULT_NAME = "noname";
     private DepositPage depositPage = new DepositPage();
     private TransferPage transferPage = new TransferPage();

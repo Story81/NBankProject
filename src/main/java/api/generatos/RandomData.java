@@ -4,6 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Random;
 
+@SuppressWarnings("checkstyle:magicnumber")
 public class RandomData {
     private static final Random RANDOM = new Random();
     private RandomData() {
