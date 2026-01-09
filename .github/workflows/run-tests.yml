@@ -56,7 +56,7 @@ jobs: # джобы, аналог этапов
           APIBASEURL: http://localhost:4111
           UIBASEURL: http://nginx:80
 
-      - name: Run tests                        # шаг 7 - запуск тестов
+      - name: Run tests                        # шаг 8 - запуск тестов
         id: run-tests
         continue-on-error: true
         env:
