@@ -39,19 +39,43 @@ public class CreateUserTest extends BaseUiTest {
                 .findFirst().get();
         ModelAssertions.assertThatModels(newUser, createdUser).match();
     }
-
     @Test
     @AdminSession
     public void adminCannotCreateUserWithInvalidDataTest() {
+        // Arrange
         CreateUserRequest newUser = RandomModelGenerator.generate(CreateUserRequest.class);
         newUser.setUsername(invalidName);
+        String username = newUser.getUsername();
 
-        assertTrue(new AdminPanel().open()
-                .createUser(newUser.getUsername(), newUser.getPassword())
-                .checkAlertMessageAndAccept(USERNAME_MUST_BE_BETWEEN_3_AND_15_CHARACTERS.getMessage())
-                .getAllUsers().stream().noneMatch(userBage -> userBage.getUsername().equals(newUser.getUsername())));
+        // Act
+        AdminPanel adminPanel = new AdminPanel().open();
+        adminPanel.createUser(username, newUser.getPassword());
 
-        long usersWithSameUsernameAsNewUser = AdminSteps.getAllUsers().stream().filter(user -> user.getUsername().equals(newUser.getUsername())).count();
+        // Assert - UI проверки
+        adminPanel.checkAlertMessageAndAccept(USERNAME_MUST_BE_BETWEEN_3_AND_15_CHARACTERS.getMessage());
+
+        assertThat(adminPanel.getAllUsers())
+                .extracting(UserBage::getUsername)
+                .doesNotContain(username);
+
+        // Assert - Backend проверки
+        long usersWithSameUsernameAsNewUser = AdminSteps.getAllUsers().stream()
+                .filter(user -> user.getUsername().equals(newUser.getUsername())).count();
         assertThat(usersWithSameUsernameAsNewUser).isZero();
     }
+
+//    @Test
+//    @AdminSession
+//    public void adminCannotCreateUserWithInvalidDataTest() {
+//        CreateUserRequest newUser = RandomModelGenerator.generate(CreateUserRequest.class);
+//        newUser.setUsername(invalidName);
+//
+//        assertTrue(new AdminPanel().open()
+//                .createUser(newUser.getUsername(), newUser.getPassword())
+//                .checkAlertMessageAndAccept(USERNAME_MUST_BE_BETWEEN_3_AND_15_CHARACTERS.getMessage())
+//                .getAllUsers().stream().noneMatch(userBage -> userBage.getUsername().equals(newUser.getUsername())));
+//
+//        long usersWithSameUsernameAsNewUser = AdminSteps.getAllUsers().stream().filter(user -> user.getUsername().equals(newUser.getUsername())).count();
+//        assertThat(usersWithSameUsernameAsNewUser).isZero();
+//    }
 }

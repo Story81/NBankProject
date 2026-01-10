@@ -29,7 +29,7 @@ public class LoginUserTest extends BaseUiTest {
         new LoginPage().open()
                 .login(admin.getUsername(), admin.getPassword())
                 .getPage(AdminPanel.class)
-                .getAdminPanelText().shouldBe(visible);
+                .checkAdminPanelIsVisible();
     }
 
     @Test
