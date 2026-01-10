@@ -8,6 +8,7 @@ import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
+import common.helpers.StepLogger;
 import org.openqa.selenium.Alert;
 import ui.elements.BaseElement;
 
@@ -29,35 +30,47 @@ public abstract class BasePage<T extends BasePage> {
     public abstract String url();
 
     public T open() {
-        return Selenide.open(url(), (Class<T>) this.getClass());
+        return StepLogger.log("Open page: " + url(), () -> {
+            return Selenide.open(url(), (Class<T>) this.getClass());
+        });
     }
 
     public <T extends BasePage> T getPage(Class<T> pageClass) {
+        return StepLogger.log("Get page instance: " + pageClass.getSimpleName(), () -> {
         return Selenide.page(pageClass);
+        });
     }
 
     public T checkAlertMessageAndAccept(String bankAlert) {
+        return StepLogger.log(String.format("Check alert message and accept: '%s'", bankAlert), () -> {
         Alert alert = switchTo().alert();
         assertThat(alert.getText()).contains(bankAlert);
         alert.accept();
         return (T) this;
+        });
     }
 
     public T shouldBeOpened() {
+        return StepLogger.log("Check that page is opened: " + url(), () -> {
         assertThat(WebDriverRunner.url()).contains(url());
         return (T) this;
+        });
     }
 
     public T refreshPage() {
+        return StepLogger.log("Refresh page", () -> {
         Selenide.refresh();
         shouldBeOpened();
         return (T) this;
+        });
     }
 
     public UserDashboard clickHomeButton() {
+        return StepLogger.log("Click home button", () -> {
         UserDashboard userDashboard = new UserDashboard();
         homeButton.shouldBe(visible).click();
         return userDashboard;
+        });
     }
 
     public static void authAsUser(String username, String password) {

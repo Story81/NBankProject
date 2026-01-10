@@ -10,11 +10,14 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Order(2)
 public class AccountExtension implements BeforeEachCallback, AfterEachCallback {
 
+    // ThreadLocal для хранения аккаунтов, созданных в данном тесте
+    private static ThreadLocal<List<AccountData>> createdAccounts = ThreadLocal.withInitial(ArrayList::new);
 
     @Override
     public void beforeEach(ExtensionContext context) {

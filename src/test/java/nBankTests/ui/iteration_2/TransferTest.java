@@ -7,6 +7,8 @@ import common.annotations.UserSession;
 import nBankTests.ui.BaseUiTest;
 import org.junit.jupiter.api.Test;
 import api.requests.steps.UserSteps;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import ui.pages.TransferPage;
 import ui.pages.UserDashboard;
 import api.utils.AccountData;
@@ -30,6 +32,7 @@ public class TransferTest extends BaseUiTest {
     @Test
     @UserSession
     @Account(value=2)
+    @Execution(ExecutionMode.SAME_THREAD)
     public void userCanDepositAndBalanceChangesCorrectlyTest() {
         user = SessionStorage.getUser();
         account_1 = SessionStorage.getAccount(user,1);
@@ -73,6 +76,7 @@ public class TransferTest extends BaseUiTest {
     @Test
     @UserSession
     @Account(value=2)
+    @Execution(ExecutionMode.SAME_THREAD)
     public void userCanDepositWithEmptyRecipientNameTest() {
         user = SessionStorage.getUser();
         account_1 = SessionStorage.getAccount(user,1);
@@ -114,6 +118,7 @@ public class TransferTest extends BaseUiTest {
     @Test
     @UserSession
     @Account
+    @Execution(ExecutionMode.SAME_THREAD)
     public void userCanNotTransferOnNonExistentAccount() {
         user = SessionStorage.getUser();
         account_1 = SessionStorage.getAccount(user,1);
@@ -149,6 +154,7 @@ public class TransferTest extends BaseUiTest {
     @Test
     @UserSession
     @Account(value=2)
+    @Execution(ExecutionMode.SAME_THREAD)
     public void userCanNotTransferWhenTransferAmountExceedsAccountBalance() {
         user = SessionStorage.getUser();
         account_1 = SessionStorage.getAccount(user,1);

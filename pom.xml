@@ -55,6 +55,30 @@
             <artifactId>selenide</artifactId>
             <version>7.9.1</version>
         </dependency>
+        <!-- Подключение к JUnit 5 -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>2.30.0</version>
+        </dependency>
+        <!-- Для API тестов с RestAssured -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>2.30.0</version>
+        </dependency>
+        <!-- Для UI тестов с Selenide -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-selenide</artifactId>
+            <version>2.30.0</version>
+        </dependency>
+        <!-- Для улучшения отображения assertThat -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-assertj</artifactId>
+            <version>2.30.0</version>
+        </dependency>
     </dependencies>
     <!-- Плагины для выполнения тестов про профилю -->
     <profiles>
@@ -131,6 +155,12 @@
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                 </configuration>
+            </plugin>
+            <!-- Плагин allure-maven -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.15.2</version>
             </plugin>
         </plugins>
     </build>

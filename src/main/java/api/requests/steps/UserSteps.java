@@ -58,7 +58,7 @@ public class UserSteps {
                 });
     }
     public static List <GetAccountsResponse> getAllUserAccounts() {
-        return RetryUtils.retry(
+        return RetryUtils.retry( "Find all user accounts",
                 () ->  SessionStorage.getSteps().getAllAccounts().stream().collect(Collectors.toList()),
                 result -> result != null,
                 4,
