@@ -1,5 +1,6 @@
 package api.requests.skeleton.requesters;
 
+import api.configs.Config;
 import api.requests.skeleton.Endpoint;
 import api.requests.skeleton.HttpRequest;
 import api.requests.skeleton.interfaces.ICrudEndpoint;
@@ -14,6 +15,7 @@ import api.models.BaseModel;
 import static io.restassured.RestAssured.given;
 
 public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAllEndpoint {
+    private final static String API_VERSION = Config.getProperty("apiVersion");
     public CrudRequester(RequestSpecification requestSpec, Endpoint endpoint, ResponseSpecification responseSpec) {
         super(requestSpec, endpoint, responseSpec);
     }
@@ -25,7 +27,7 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
             return given()
                     .spec(requestSpec)
                     .body(body)
-                    .post(endpoint.getUrl())
+                    .post(API_VERSION + endpoint.getUrl())
                     .then()
                     .spec(responseSpec);
         });
@@ -37,7 +39,7 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
             return given()
                     .spec(requestSpec)
                     .body(body)
-                    .post(endpoint.getUrl());
+                    .post(API_VERSION + endpoint.getUrl());
         });
     }
 
@@ -46,7 +48,7 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
         return StepLogger.log("GET request to " + endpoint.getUrl(), () ->
                 given()
                         .spec(requestSpec)
-                        .get(endpoint.getUrl())
+                        .get(API_VERSION + endpoint.getUrl())
                         .then()
                         .spec(responseSpec)
         );
@@ -58,7 +60,7 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
                 given()
                         .spec(requestSpec)
                         .body(model)
-                        .put(endpoint.getUrl())
+                        .put(API_VERSION + endpoint.getUrl())
                         .then()
                         .spec(responseSpec)
         );
@@ -71,7 +73,7 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
                         .spec(requestSpec)
                         .pathParam("id", id)
                         .when()
-                        .delete(endpoint.getUrl())
+                        .delete(API_VERSION + endpoint.getUrl())
                         .then()
                         .spec(responseSpec)
         );
@@ -82,7 +84,7 @@ public class CrudRequester extends HttpRequest implements ICrudEndpoint, IGetAll
         return StepLogger.log("GET request to " + endpoint.getUrl(), () ->
                 given()
                         .spec(requestSpec)
-                        .get(endpoint.getUrl())
+                        .get(API_VERSION + endpoint.getUrl())
                         .then()
                         .spec(responseSpec)
         );
