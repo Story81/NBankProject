@@ -46,10 +46,6 @@ public class StepLogger {
         });
     }
 
-    public static void takeScreenshot(String title) {
-        attachScreenshot(title);
-    }
-
     private static void attachScreenshot(String stepName) {
         // если вебдрайвер не запущен (API- шаг) — просто выходим
         try {
