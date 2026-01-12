@@ -87,9 +87,11 @@ jobs: # джобы, аналог этапов
 
       - name: Run Swagger coverage             # шаг 11 - собираем Swagger coverage в любом случае
         if: always()
-        run: .swagger-coverage-commandline/bin/swagger-coverage-commandline 
-         -s http://localhost:4111/v3/api-docs 
-         -i target/swagger-coverage-output
+        run: |
+         chmod +x .swagger-coverage-commandline/bin/swagger-coverage-commandline
+         .swagger-coverage-commandline/bin/swagger-coverage-commandline 
+           -s http://localhost:4111/v3/api-docs 
+           -i target/swagger-coverage-output
 
       - name: Load test report history          # шаг 12 - Загружаем историю отчётов Allure из ветки gh-pages для трендов
         uses: actions/checkout@v2
