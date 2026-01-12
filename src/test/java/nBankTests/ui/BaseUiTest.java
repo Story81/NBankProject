@@ -33,9 +33,8 @@ public class BaseUiTest {
 
         // Добавление слушателя для интеграции с Allure отчетностью
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
-                .screenshots(true)                // Делать скриншоты на каждый шаг
-                .savePageSource(true)             // Сохранять исходный код страницы
-                .includeSelenideSteps(true)                // Включать шаги Selenide
+                .screenshots(true)
+                .savePageSource(true)
         );
 
         Map<String, Object> options = new HashMap<>();
