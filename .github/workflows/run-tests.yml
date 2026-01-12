@@ -113,6 +113,13 @@ jobs: # джобы, аналог этапов
         if: always()
         run: sudo cp swagger-coverage-report.html allure-history/${{ github.run_number }}
 
+      - name: Check API coverage quality gate
+        id: check-coverage
+        if: always()
+        run: |
+          chmod +x check-api-coverage.sh
+          ./check-api-coverage.sh 50
+
       - name: Publish test report                # шаг 15 - Публикуем директорию allure-history в ветку gh-pages
         uses: peaceiris/actions-gh-pages@v3
         if: always()
