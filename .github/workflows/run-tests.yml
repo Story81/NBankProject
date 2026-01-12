@@ -114,7 +114,6 @@ jobs: # джобы, аналог этапов
         run: sudo cp swagger-coverage-report.html allure-history/${{ github.run_number }}
 
       - name: Check API coverage quality gate
-        id: check-coverage
         if: always()
         run: |
           chmod +x check-api-coverage.sh

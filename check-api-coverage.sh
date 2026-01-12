@@ -17,6 +17,6 @@ if [ "$COVERAGE" -lt "$MIN_COVERAGE" ]; then
     echo "❌ QUALITY GATE FAILED: API coverage ${COVERAGE}% is below minimum ${MIN_COVERAGE}%"
     exit 1
 else
-    echo "✅ QUALITY GATE PASSED": API coverage ${COVERAGE}% meets minimum ${MIN_COVERAGE}%"
+    echo "✅ QUALITY GATE PASSED: API coverage ${COVERAGE}% meets minimum ${MIN_COVERAGE}%"
     exit 0
 fi
