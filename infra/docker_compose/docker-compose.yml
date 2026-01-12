@@ -1,6 +1,6 @@
 services:
   backend:
-    image: nobugsme/nbank:with_validation_fix_with_swagger
+    image: nobugsme/nbank:with_deletion
     ports:
       - "4111:4111"
     networks:
