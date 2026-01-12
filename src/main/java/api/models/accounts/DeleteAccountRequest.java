@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class DeleteAccountRequest extends BaseModel {
-    Integer accountId;
+    private Integer accountId;
 }

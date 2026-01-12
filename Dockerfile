@@ -26,8 +26,8 @@ COPY . .
 # теперь внутри есть зависимости, есть весь проект и мы готовы запускать тесты (под админом)
 USER root
 
-# mvn test -P api
-# mvn -DskipTests=true surfire-report:report-only
+# 1-я команда: mvn test -P api
+# 2-я команда: mvn -DskipTests=true surfire-report:report-only
 # лог выводился не в консоль, а в файл
 # bash file
 CMD ["/bin/bash","-lc", "\

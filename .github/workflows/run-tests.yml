@@ -1,0 +1,138 @@
+name: Run tests and Push Docker Image
+
+on:
+  # 1. При любом push в main/master с изменениями в src
+  #  push:
+  #    branches: [ main, master ]
+  #    paths:
+  #      - 'src/**'
+  #При любом push в другие ветки (для тестирования)
+  push:
+    paths:
+      - "src/**"
+
+    # 2. Ручной запуск
+  workflow_dispatch:
+
+jobs: # джобы, аналог этапов
+  run-tests:
+    name: Set up services (review apps) and run tests
+    runs-on: ubuntu-latest    # на какой ранере (агенте) мы хотим выполнять тесты
+
+    outputs:
+      tests_successful: ${{ steps.verify-tests.outputs.success }}
+      commit_hash: ${{ steps.get-hash.outputs.hash }}
+
+    steps: # шаги конкретной job
+      - name: Checkout repository              # шаг 1 - копируем файлы репозитория внутрь CI агента
+        uses: actions/checkout@v4
+
+      - name: Set up JDK                       # шаг 2 - устанавливаем JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Maven repository           # шаг 3 - создаем cache Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Set up services                 # шаг 4 - запускаем restart_docker.sh
+        run: cd infra/docker_compose && bash restart_docker.sh && cd ../..
+
+      - name: Give execute permission to mvnw  # шаг 5 - устанавливаем права доступа
+        run: chmod +x mvnw
+
+      - name: Run Checkstyle                   # шаг 6 - запуск checkstyle
+        run: |
+          echo "Running Checkstyle..."
+          ./mvnw checkstyle:check -Dcheckstyle.severity=error -q
+          echo "✅ Checkstyle completed successfully"
+        env:
+          APIBASEURL: http://localhost:4111
+          UIBASEURL: http://nginx:80
+
+      - name: Run tests                        # шаг 7 - запуск тестов
+        id: run-tests
+        continue-on-error: true
+        env:
+          APIBASEURL: http://localhost:4111
+          UIBASEURL: http://nginx:80
+        run: ./mvnw clean test -q
+
+      - name: Verify tests                    # шаг 8 - получение статуса прогона тестов
+        id: verify-tests
+        if: always()
+        run: |
+          if [ "${{ steps.run-tests.outcome }}" == "success"  ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get commit hash                   # шаг 9 - получение хэша коммита
+        id: get-hash
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Upload test results               # шаг 9 - сохранение артефакта
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: target/surefire-reports/
+
+  build-and-push-docker:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: needs.run-tests.outputs.tests_successful == 'true'
+    steps:
+      - name: Check Docker Hub secrets
+        run: |
+            echo "=== Docker Hub Secrets Check ==="
+            echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
+            echo "DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}"
+            if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+               echo "❌ Ошибка: не установлена переменная окружения DOCKERHUB_USERNAME"
+               exit 1
+            fi
+            if [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+               echo "❌ Ошибка: не установлена переменная окружения DOCKERHUB_TOKEN"
+               exit 1
+            fi
+            echo "✅ Docker Hub secrets установлены успешно"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+
+      - name: Build and push Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/nbank-tests:${{ needs.run-tests.outputs.commit_hash }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/nbank-tests:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Verify Docker image
+        run: |
+          echo "✅ Docker image built and pushed successfully!"
+          echo "Image: ${{ secrets.DOCKERHUB_USERNAME }}/nbank-tests:${{ needs.run-tests.outputs.commit_hash }}"
+          echo "Latest: ${{ secrets.DOCKERHUB_USERNAME }}/nbank-tests:latest" 

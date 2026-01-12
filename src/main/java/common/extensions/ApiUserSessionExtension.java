@@ -17,7 +17,9 @@ public class ApiUserSessionExtension implements BeforeEachCallback, AfterEachCal
     @Override
     public void beforeEach(ExtensionContext ctx) {
         ApiUserSession ann = ctx.getTestMethod().orElseThrow().getAnnotation(ApiUserSession.class);
-        if (ann == null) return;
+        if (ann == null) {
+            return;
+        }
 
         SessionStorage.clear();
         List<UserData> users = new ArrayList<>();

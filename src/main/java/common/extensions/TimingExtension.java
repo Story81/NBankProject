@@ -20,6 +20,7 @@ public class TimingExtension implements BeforeTestExecutionCallback, AfterTestEx
     public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
         String testName = extensionContext.getRequiredTestClass().getPackageName() + "." + extensionContext.getDisplayName();
         Long testDuration = System.currentTimeMillis() - startTimes.get(testName);
-        System.out.println("Thread " + Thread.currentThread().getName() + ": Test finished " + testName + ", test duration " + testDuration + " ms");
+        System.out.println("Thread " + Thread.currentThread().getName() + ": Test finished " + testName + ", " +
+                "test duration " + testDuration + " ms");
     }
 }
