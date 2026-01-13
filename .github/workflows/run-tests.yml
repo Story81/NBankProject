@@ -122,6 +122,7 @@ jobs: # джобы, аналог этапов
       - name: Publish test report                # шаг 16 - Публикуем директорию allure-history в ветку gh-pages
         uses: peaceiris/actions-gh-pages@v3
         if: always()
+        continue-on-error: true                  # не падать если деплой медленный
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
