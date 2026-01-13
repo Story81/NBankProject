@@ -78,7 +78,7 @@ jobs: # джобы, аналог этапов
         id: get-hash
         run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Upload test results               # шаг 9 - сохранение артефакта
+      - name: Upload test results               # шаг 10 - сохранение артефакта
         uses: actions/upload-artifact@v4
         if: always()
         with:

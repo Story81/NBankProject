@@ -2,6 +2,7 @@ package ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
+import common.helpers.StepLogger;
 import lombok.Getter;
 
 import static com.codeborne.selenide.Condition.text;
@@ -47,65 +48,85 @@ public class TransferPage extends BasePage<TransferPage> {
     }
 
     public TransferPage checkTransferHeader() {
-        assertThat(WebDriverRunner.url()).contains(url());
-        makeTransferHeader.shouldBe(visible);
-        return this;
+        return StepLogger.log("Check header of transfer page", () -> {
+            assertThat(WebDriverRunner.url()).contains(url());
+            makeTransferHeader.shouldBe(visible);
+            return this;
+        });
     }
 
     public TransferPage checkSelectAccountField() {
-        selectAccountFieldTitle.shouldBe(visible);
-        selectAccountField.shouldBe(visible).shouldHave(text("-- Choose an account --"));
-        selectAccountField.click();
-        return this;
+        return StepLogger.log(String.format("Click on sender account field"), () -> {
+            selectAccountFieldTitle.shouldBe(visible);
+            selectAccountField.shouldBe(visible).shouldHave(text("-- Choose an account --"));
+            selectAccountField.click();
+            return this;
+        });
     }
 
     public TransferPage selectSenderAccount(String accountNumber) {
-        SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
-        selectAccount.click();
-        selectAccountField.shouldHave(text(accountNumber));
-        return this;
+        return StepLogger.log(String.format("Select sender account: %s", accountNumber), () -> {
+            SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
+            selectAccount.click();
+            selectAccountField.shouldHave(text(accountNumber));
+            return this;
+        });
     }
 
     public TransferPage inputRecipientName(String userName) {
-        recipientNameFieldTitle.shouldBe(visible);
-        recipientNameField.shouldBe(visible).sendKeys(userName);
-        return this;
+        return StepLogger.log(String.format("Input recipient name: %s", userName), () -> {
+            recipientNameFieldTitle.shouldBe(visible);
+            recipientNameField.shouldBe(visible).sendKeys(userName);
+            return this;
+        });
     }
 
     public TransferPage selectRecipientAccount(String accountNumber) {
-        recipientAccountNumberFieldTitle.shouldBe(visible);
-        recipientAccountNumberField.shouldBe(visible).sendKeys(accountNumber);
-        return this;
+        return StepLogger.log(String.format("Select recipient account: %s", accountNumber), () -> {
+            recipientAccountNumberFieldTitle.shouldBe(visible);
+            recipientAccountNumberField.shouldBe(visible).sendKeys(accountNumber);
+            return this;
+        });
     }
 
     public TransferPage inputTransferAmount(Double transferAmount) {
-        amountFieldTitle.shouldBe(visible);
-        amountField.shouldBe(visible).sendKeys(transferAmount.toString());
-        return this;
+        return StepLogger.log(String.format("Input transfer amount: %.2f", transferAmount), () -> {
+            amountFieldTitle.shouldBe(visible);
+            amountField.shouldBe(visible).sendKeys(transferAmount.toString());
+            return this;
+        });
     }
 
     public TransferPage clickConfirmDetailsCheckbox() {
-        confirmDetailsLabel.shouldBe(visible);
-        confirmDetailsCheckbox.shouldBe(visible).click();
-        return this;
+        return StepLogger.log("Click confirm details checkbox", () -> {
+            confirmDetailsLabel.shouldBe(visible);
+            confirmDetailsCheckbox.shouldBe(visible).click();
+            return this;
+        });
     }
 
     public TransferPage clickTransferButton() {
-        sendTransferButton.shouldBe(visible).click();
-        return this;
+        return StepLogger.logWithScreenshotBefore("Click transfer button", () -> {
+            sendTransferButton.shouldBe(visible).click();
+            return this;
+        });
     }
 
     public TransferPage checkSenderAccountBalance(String accountNumber, Double balance) {
-        SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
-        String expectedBalance = String.format("%.2f", balance).replace(',', '.');
-        selectAccount.shouldHave(text(expectedBalance));
-        return this;
+        return StepLogger.log(String.format("Check sender account %s balance: %.2f", accountNumber, balance), () -> {
+            SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
+            String expectedBalance = String.format("%.2f", balance).replace(',', '.');
+            selectAccount.shouldHave(text(expectedBalance));
+            return this;
+        });
     }
 
     public TransferPage checkReceivedAccountBalance(String accountNumber, Double balance) {
-        SelenideElement receivedAccount = selectAccountField.$(byText(accountNumber));
-        receivedAccount.click();
-        receivedAccount.shouldHave(text(balance.toString()));
-        return this;
+        return StepLogger.log(String.format("Check received account %s balance: %.2f", accountNumber, balance), () -> {
+            SelenideElement receivedAccount = selectAccountField.$(byText(accountNumber));
+            receivedAccount.click();
+            receivedAccount.shouldHave(text(balance.toString()));
+            return this;
+        });
     }
 }

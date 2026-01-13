@@ -1,6 +1,7 @@
 package ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import common.helpers.StepLogger;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -13,14 +14,17 @@ public class HeaderPanel {
     private SelenideElement userName = profileMenu.$(".user-username");
 
     public ProfilePage clickUserProfileMenu() {
-        ProfilePage profilePage = new ProfilePage();
-        profileMenu.shouldBe(visible).click();
-        return profilePage;
+        return StepLogger.log("Click on profile menu", () -> {
+            ProfilePage profilePage = new ProfilePage();
+            profileMenu.shouldBe(visible).click();
+            return profilePage;
+        });
     }
     public HeaderPanel checkUsersInfo(String nameValue, String userNameValue) {
+        return StepLogger.log("Check user's info", () -> {
         name.shouldBe(visible).shouldHave(text(nameValue));
         userName.shouldBe(visible).shouldHave(text(userNameValue));
         return this;
+        });
     }
-
 }

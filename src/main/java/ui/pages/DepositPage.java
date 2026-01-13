@@ -1,6 +1,7 @@
 package ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import common.helpers.StepLogger;
 import lombok.Getter;
 
 import static com.codeborne.selenide.Condition.text;
@@ -23,36 +24,44 @@ public class DepositPage extends BasePage<DepositPage> {
     private final SelenideElement depositButton = $(byText("\uD83D\uDCB5 Deposit"));
 
     public DepositPage clickSelectAccountField() {
-        selectAccountFieldTitle.shouldBe(visible);
-        selectAccountField.shouldBe(visible).shouldHave(text("-- Choose an account --"));
-        selectAccountField.click();
-        return this;
+        return StepLogger.log("Click select account field", () -> {
+            selectAccountFieldTitle.shouldBe(visible);
+            selectAccountField.shouldBe(visible).shouldHave(text("-- Choose an account --"));
+            selectAccountField.click();
+            return this;
+        });
     }
 
     public DepositPage selectDepositAccount(String accountNumber) {
-        SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
-        selectAccount.click();
-        selectAccountField.shouldHave(text(accountNumber));
-        return this;
+        return StepLogger.log(String.format("Select deposit account: %s", accountNumber), () -> {
+            SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
+            selectAccount.click();
+            selectAccountField.shouldHave(text(accountNumber));
+            return this;
+        });
     }
 
     public DepositPage enterDepositAmountInField(Double depositAmount) {
-        amountFieldTitle.shouldBe(visible);
-        amountFieldTitle.shouldBe(visible).shouldHave(text("Enter amount"));
-        amountField.sendKeys(depositAmount.toString());
-        return this;
+        return StepLogger.log(String.format("Enter deposit amount: %.2f", depositAmount), () -> {
+            amountFieldTitle.shouldBe(visible);
+            amountFieldTitle.shouldBe(visible).shouldHave(text("Enter amount"));
+            amountField.sendKeys(depositAmount.toString());
+            return this;
+        });
     }
 
     public DepositPage clickDepositButton() {
+        return StepLogger.logWithScreenshotBefore("click Deposit Button", () -> {
         depositButton.shouldBe(visible).click();
         return this;
+        });
     }
 
     public DepositPage checkAccountBalance(String accountNumber, Double depositAmount) {
-        SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
-        selectAccount.shouldHave(text(depositAmount.toString()));
-        return this;
+        return StepLogger.log(String.format("Check account %s balance: %.2f", accountNumber, depositAmount), () -> {
+            SelenideElement selectAccount = selectAccountField.$(byText(accountNumber));
+            selectAccount.shouldHave(text(depositAmount.toString()));
+            return this;
+        });
     }
-
-
 }

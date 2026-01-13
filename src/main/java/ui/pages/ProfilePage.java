@@ -1,6 +1,7 @@
 package ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import common.helpers.StepLogger;
 import lombok.Getter;
 
 import static com.codeborne.selenide.Condition.attribute;
@@ -22,19 +23,26 @@ public class ProfilePage extends BasePage<ProfilePage> {
         return "/edit-profile";
     }
     public ProfilePage profilePageShouldBeOpen() {
-        shouldBeOpened();
-        editProfileTitle.shouldBe(visible);
-        return this;
+        return StepLogger.log("Verify profile page is opened", () -> {
+            shouldBeOpened();
+            editProfileTitle.shouldBe(visible);
+            return this;
+        });
     }
 
     public ProfilePage setNewUserName(String name) {
-        editProfileTitle.shouldBe(visible);
-        editNameField.shouldBe(visible).setValue(name);
-        editNameField.shouldHave(attribute("value", name));
-        return this;
+        return StepLogger.log("Set new user name: " + name, () -> {
+            editProfileTitle.shouldBe(visible);
+            editNameField.shouldBe(visible).setValue(name);
+            editNameField.shouldHave(attribute("value", name));
+            return this;
+        });
     }
+
     public ProfilePage clickSaveButton() {
-        saveButton.shouldBe(visible).click();
-        return this;
+        return StepLogger.logWithScreenshotBefore("Click save button to update profile", () -> {
+            saveButton.shouldBe(visible).click();
+            return this;
+        });
     }
 }
