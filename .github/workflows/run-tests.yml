@@ -62,6 +62,7 @@ jobs: # джобы, аналог этапов
         env:
           APIBASEURL: http://localhost:4111
           UIBASEURL: http://nginx:80
+          APIVERSION: /api/v1
         run: ./mvnw clean test -q
 
       - name: Verify tests                    # шаг 8 - получение статуса прогона тестов
@@ -157,7 +158,6 @@ jobs: # джобы, аналог этапов
           📊 <a href='${ALLURE_REPORT}'>Allure Report</a>
           📈 <a href='${SWAGGER_REPORT}'>API Coverage</a>"
       # === КОНЕЦ: Уведомление в Telegram ===
-
 
   build-and-push-docker:
     name: Build and push Docker image
