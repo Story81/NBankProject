@@ -41,7 +41,7 @@ jobs: # джобы, аналог этапов
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Set up services                 # шаг 4 - запускаем restart_docker.sh
+      - name: Set up services                  # шаг 4 - запускаем restart_docker.sh
         run: cd infra/docker_compose && bash restart_docker.sh && cd ../..
 
       - name: Give execute permission to mvnw  # шаг 5 - устанавливаем права доступа
@@ -62,6 +62,7 @@ jobs: # джобы, аналог этапов
         env:
           APIBASEURL: http://localhost:4111
           UIBASEURL: http://nginx:80
+          APIVERSION: /api/v1
         run: ./mvnw clean test -q
 
       - name: Verify tests                    # шаг 8 - получение статуса прогона тестов
@@ -84,6 +85,80 @@ jobs: # джобы, аналог этапов
         with:
           name: test-results
           path: target/surefire-reports/
+
+      - name: Run Swagger coverage             # шаг 11 - собираем Swagger coverage в любом случае
+        if: always()
+        run: |
+          chmod +x .swagger-coverage-commandline/bin/swagger-coverage-commandline
+          .swagger-coverage-commandline/bin/swagger-coverage-commandline \
+            -s http://localhost:4111/v3/api-docs \
+            -i target/swagger-coverage-output
+
+      - name: Load test report history          # шаг 12 - Загружаем историю отчётов Allure из ветки gh-pages для трендов
+        uses: actions/checkout@v2
+        if: always()
+        with:
+            ref: gh-pages
+            path: gh-pages
+
+      - name: Build test report                  # шаг 13 - Генерируем Allure-отчёт, складываем историю и новые результаты
+        uses: simple-elf/allure-report-action@v1.13
+        if: always()
+        with:
+          gh_pages: gh-pages
+          allure_results: target/allure-results
+          allure_history: allure-history
+
+      - name: Build swagger coverage report      # шаг 14 - Копируем html-отчёт по Swagger coverage в каталог allure-history
+        if: always()
+        run: sudo cp swagger-coverage-report.html allure-history/${{ github.run_number }}
+
+      - name: Check API coverage quality gate    # шаг 15 - Настраиваем quality gate на значение 50%
+        if: always()
+        run: |
+          chmod +x check-api-coverage.sh
+          ./check-api-coverage.sh 50
+
+      - name: Publish test report                # шаг 16 - Публикуем директорию allure-history в ветку gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        continue-on-error: true                  # не падать если деплой медленный
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+      # === НАЧАЛО: Уведомление в Telegram ===
+      - name: Notify Telegram
+        if: always()
+        run: |
+          # Статус тестов
+          STATUS="❌ FAILED"
+          EMOJI="❌"
+          if [[ "${{ job.status }}" == "success" ]]; then
+            STATUS="✅ PASSED"
+            EMOJI="✅"
+          fi
+          
+          # Формируем ссылки на отчеты
+          REPORT_BASE="https://story81.github.io/NBankProject/${{ github.run_number }}"
+          ALLURE_REPORT="${REPORT_BASE}/index.html"
+          SWAGGER_REPORT="${REPORT_BASE}/swagger-coverage-report.html"
+          
+          # Формируем сообщение
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d parse_mode="HTML" \
+            -d text="$EMOJI Tests $STATUS #${{ github.run_number }}
+
+          📦 <a href='${{ github.server_url }}/${{ github.repository }}'>NBankProject</a>
+          🌿 <a href='${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}'>${{ github.ref_name }}</a>
+          👤 ${{ github.actor }}
+          
+          🔗 <a href='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'>View Run</a>
+          📊 <a href='${ALLURE_REPORT}'>Allure Report</a>
+          📈 <a href='${SWAGGER_REPORT}'>API Coverage</a>"
+      # === КОНЕЦ: Уведомление в Telegram ===
 
   build-and-push-docker:
     name: Build and push Docker image
@@ -136,3 +211,7 @@ jobs: # джобы, аналог этапов
           echo "✅ Docker image built and pushed successfully!"
           echo "Image: ${{ secrets.DOCKERHUB_USERNAME }}/nbank-tests:${{ needs.run-tests.outputs.commit_hash }}"
           echo "Latest: ${{ secrets.DOCKERHUB_USERNAME }}/nbank-tests:latest" 
+
+      - name: Clean up services
+        if: always()
+        run: cd infra/docker_compose && docker compose down
